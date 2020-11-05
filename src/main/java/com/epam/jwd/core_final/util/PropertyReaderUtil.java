@@ -32,7 +32,15 @@ public final class PropertyReaderUtil {
         final String propertiesFileName = "src/main/resources/application.properties";
         try (InputStream iStream = new FileInputStream(propertiesFileName)) {
             properties.load(iStream);
-
+            ApplicationProperties applicationProperties = new ApplicationProperties(
+                    properties.getProperty("inputRootDir"),
+                    properties.getProperty("outputRootDir"),
+                    properties.getProperty("crewFileName"),
+                    properties.getProperty("missionsFileName"),
+                    properties.getProperty("spaceshipsFileName"),
+                    Integer.valueOf(properties.getProperty("fileRefreshRate")),
+                    properties.getProperty("dateTimeFormat")
+            );
             System.out.println(properties);
         } catch (IOException e) {
             e.printStackTrace();
