@@ -8,10 +8,11 @@ import java.util.function.Supplier;
 public interface Application {
 
     static ApplicationMenu start() throws InvalidStateException {
-        final Supplier<ApplicationContext> applicationContextSupplier = null; // todo
-        final NassaContext nassaContext = new NassaContext();
-
-        nassaContext.init();
-        return applicationContextSupplier::get;
+        final Supplier<ApplicationContext> applicationContextSupplier = null;
+        //NassaContext::getInstance; // todo
+        // final NassaContext nassaContext = NassaContext.getInstance();
+        NassaContext.getInstance().init();
+        //return applicationContextSupplier::get;
+        return null;
     }
 }
