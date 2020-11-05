@@ -2,6 +2,7 @@ package com.epam.jwd.core_final.context.impl;
 
 import com.epam.jwd.core_final.context.ApplicationContext;
 import com.epam.jwd.core_final.criteria.CrewMemberCriteria;
+import com.epam.jwd.core_final.domain.AbstractBaseEntity;
 import com.epam.jwd.core_final.domain.BaseEntity;
 import com.epam.jwd.core_final.domain.CrewMember;
 import com.epam.jwd.core_final.domain.Rank;
@@ -18,13 +19,8 @@ import java.util.Optional;
 
 // todo
 public class NassaContext implements ApplicationContext {
-
-    private NassaContext() {
-
-    }
-
+    private NassaContext() {}
     private final static NassaContext INSTANCE = new NassaContext();
-
     public static NassaContext getInstance() {
         return INSTANCE;
     }
@@ -66,15 +62,28 @@ public class NassaContext implements ApplicationContext {
 //            //System.out.println("Map: " + spaceship.);
 //            System.out.println();
 //        });
-        Optional<CrewMember> crewMember = new CrewServiceImpl().findCrewMemberByCriteria(
+        Optional<CrewMember> crewMember = CrewServiceImpl.getInstance().findCrewMemberByCriteria(
                 new CrewMemberCriteria.Builder() {{
-                    name("Zoe Day"); // из User.Builder
-                    id(0L); // из RussianUser.Builder
+                    name("Zoe Day");
+                    id(0L);
                     role(Role.resolveRoleById(1L));
-                    rank(Rank.resolveRankById(1L)); // из User.Builder
+                    rank(Rank.resolveRankById(1L));
                     isReadyForNextMissions(true);
                 }}.build()
         );
+
+        Collection<CrewMember> crewMemberCollection = CrewServiceImpl.getInstance().findAllCrewMembersByCriteria(
+                new CrewMemberCriteria.Builder() {{
+                    //name("Zoe Day");
+                    //id(0L);
+                    role(Role.resolveRoleById(1L));
+                   // rank(Rank.resolveRankById(1L));
+                    //isReadyForNextMissions(true);
+                }}.build()
+        );
+
+        crewMemberCollection.stream().map(AbstractBaseEntity::getName).forEach(System.out::println);
+
         crewMember.ifPresent(member -> System.out.println("Found:\n" + "Name: " + member.getName()));
         //throw new InvalidStateException();
     }

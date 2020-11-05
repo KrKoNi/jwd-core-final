@@ -17,7 +17,7 @@ public class CrewMemberCriteria extends Criteria<CrewMember> {
     public static class Builder extends Criteria.Builder {
         private Role role;
         private Rank rank;
-        private Boolean isReadyForNextMissions; //necessary
+        private Boolean isReadyForNextMissions;
 
         public Builder rank(Rank rank) {
             this.rank = rank;

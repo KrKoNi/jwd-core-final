@@ -14,6 +14,9 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public class InlineFileStrategy implements FileStrategy {
+
+
+
     @Override
     public void read() {
         String path = "src/main/resources/"

@@ -25,12 +25,10 @@ public abstract class Criteria<T extends BaseEntity> {
             this.name = name;
             return (T) this;
         }
-
         protected T id(Long id) {
             this.id = id;
             return (T) this;
         }
-
     }
 
     Criteria(Criteria.Builder builder) {

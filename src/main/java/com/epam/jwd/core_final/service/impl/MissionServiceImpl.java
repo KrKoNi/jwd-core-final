@@ -8,6 +8,18 @@ import java.util.List;
 import java.util.Optional;
 
 public class MissionServiceImpl implements MissionService {
+
+    private MissionServiceImpl() {
+
+    }
+
+    private final static MissionServiceImpl INSTANCE = new MissionServiceImpl();
+
+    public static MissionServiceImpl getInstance() {
+        return INSTANCE;
+    }
+
+
     @Override
     public List<FlightMission> findAllMissions() {
         return null;

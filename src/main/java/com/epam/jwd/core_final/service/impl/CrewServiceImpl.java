@@ -19,6 +19,18 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CrewServiceImpl implements CrewService {
+
+    private CrewServiceImpl() {
+
+    }
+
+    private final static CrewServiceImpl INSTANCE = new CrewServiceImpl();
+
+    public static CrewServiceImpl getInstance() {
+        return INSTANCE;
+    }
+
+
     @Override
     public List<CrewMember> findAllCrewMembers() {
         return (List<CrewMember>) NassaContext.getInstance().retrieveBaseEntityList(CrewMember.class);
@@ -45,6 +57,7 @@ public class CrewServiceImpl implements CrewService {
     @Override
     public Optional<CrewMember> findCrewMemberByCriteria(Criteria<? extends CrewMember> criteria) {
         List<CrewMember> crewMembers = findAllCrewMembers();
+
         return crewMembers.stream()
                 .filter(crewMember -> Objects
                         .equals(criteria,
