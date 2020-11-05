@@ -39,7 +39,7 @@ public class InlineFileStrategy implements FileStrategy {
                         Role role = Role.resolveRoleById(Long.valueOf(temp[0]));
                         String name = temp[1];
                         Rank rank = Rank.resolveRankById(Long.valueOf(temp[2]));
-                        new CrewServiceImpl().createCrewMember(role, name, rank);
+                        CrewServiceImpl.getInstance().createCrewMember(role, name, rank);
                     });
 
 
