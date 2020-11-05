@@ -2,6 +2,9 @@ package com.epam.jwd.core_final.util;
 
 import com.epam.jwd.core_final.domain.ApplicationProperties;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public final class PropertyReaderUtil {
@@ -9,6 +12,10 @@ public final class PropertyReaderUtil {
     private static final Properties properties = new Properties();
 
     private PropertyReaderUtil() {
+    }
+
+    public static Properties getProperties() {
+        return properties;
     }
 
     /**
@@ -19,8 +26,17 @@ public final class PropertyReaderUtil {
      * as a result - you should populate {@link ApplicationProperties} with corresponding
      * values from property file
      */
+
+
     public static void loadProperties() {
-        final String propertiesFileName = "resource/application.properties";
+        final String propertiesFileName = "src/main/resources/application.properties";
+        try (InputStream iStream = new FileInputStream(propertiesFileName)) {
+            properties.load(iStream);
+
+            System.out.println(properties);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 }
