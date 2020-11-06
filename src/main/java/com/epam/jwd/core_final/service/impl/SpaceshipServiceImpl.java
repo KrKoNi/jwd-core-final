@@ -2,17 +2,18 @@ package com.epam.jwd.core_final.service.impl;
 
 import com.epam.jwd.core_final.context.impl.NassaContext;
 import com.epam.jwd.core_final.criteria.Criteria;
-import com.epam.jwd.core_final.domain.CrewMember;
+import com.epam.jwd.core_final.criteria.SpaceshipCriteria;
 import com.epam.jwd.core_final.domain.Role;
 import com.epam.jwd.core_final.domain.Spaceship;
-import com.epam.jwd.core_final.factory.impl.CrewMemberFactory;
 import com.epam.jwd.core_final.factory.impl.SpaceshipFactory;
 import com.epam.jwd.core_final.service.SpaceshipService;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SpaceshipServiceImpl implements SpaceshipService {
 
@@ -29,17 +30,44 @@ public class SpaceshipServiceImpl implements SpaceshipService {
 
     @Override
     public List<Spaceship> findAllSpaceships() {
-        return null;
+        return (List<Spaceship>) NassaContext.getInstance().retrieveBaseEntityList(Spaceship.class);
     }
 
     @Override
     public List<Spaceship> findAllSpaceshipsByCriteria(Criteria<? extends Spaceship> criteria) {
-        return null;
+        List<Spaceship> spaceships = findAllSpaceships();
+        return spaceships.stream()
+                .filter(spaceship -> Objects
+                        .equals(criteria,
+                                new SpaceshipCriteria.Builder() {{
+                                    name(spaceship.getName());
+                                    id(spaceship.getId());
+                                    flightDistance(spaceship.getFlightDistance());
+                                    crew(spaceship.getCrew());
+                                    isReadyForNextMissions(spaceship.getReadyForNextMissions());
+                                }}.build()
+                        )
+                )
+                .collect(Collectors.toList());
+
     }
 
     @Override
     public Optional<Spaceship> findSpaceshipByCriteria(Criteria<? extends Spaceship> criteria) {
-        return Optional.empty();
+        List<Spaceship> spaceships = findAllSpaceships();
+        return spaceships.stream()
+                .filter(spaceship -> Objects
+                        .equals(criteria,
+                                new SpaceshipCriteria.Builder() {{
+                                    name(spaceship.getName());
+                                    id(spaceship.getId());
+                                    flightDistance(spaceship.getFlightDistance());
+                                    crew(spaceship.getCrew());
+                                    isReadyForNextMissions(spaceship.getReadyForNextMissions());
+                                }}.build()
+                        )
+                )
+                .findFirst();
     }
 
     @Override
