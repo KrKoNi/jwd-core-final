@@ -43,9 +43,9 @@ public class CrewServiceImpl implements CrewService {
                 .filter(crewMember -> Objects
                         .equals(criteria,
                             new CrewMemberCriteria.Builder() {{
-                                    name(crewMember.getName()); // из User.Builder
-                                    id(crewMember.getId()); // из RussianUser.Builder
-                                    rank(crewMember.getRank()); // из User.Builder
+                                    name(crewMember.getName());
+                                    id(crewMember.getId());
+                                    rank(crewMember.getRank());
                                     role(crewMember.getRole());
                                     isReadyForNextMissions(crewMember.getReadyForNextMissions());
                                 }}.build()

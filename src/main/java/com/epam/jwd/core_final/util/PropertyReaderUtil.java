@@ -41,7 +41,6 @@ public final class PropertyReaderUtil {
                     Integer.valueOf(properties.getProperty("fileRefreshRate")),
                     properties.getProperty("dateTimeFormat")
             );
-            System.out.println(properties);
         } catch (IOException e) {
             e.printStackTrace();
         }

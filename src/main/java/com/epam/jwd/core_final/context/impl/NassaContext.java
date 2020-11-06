@@ -2,6 +2,7 @@ package com.epam.jwd.core_final.context.impl;
 
 import com.epam.jwd.core_final.context.ApplicationContext;
 import com.epam.jwd.core_final.criteria.CrewMemberCriteria;
+import com.epam.jwd.core_final.criteria.SpaceshipCriteria;
 import com.epam.jwd.core_final.domain.AbstractBaseEntity;
 import com.epam.jwd.core_final.domain.BaseEntity;
 import com.epam.jwd.core_final.domain.CrewMember;
@@ -9,7 +10,9 @@ import com.epam.jwd.core_final.domain.Rank;
 import com.epam.jwd.core_final.domain.Role;
 import com.epam.jwd.core_final.domain.Spaceship;
 import com.epam.jwd.core_final.exception.InvalidStateException;
+import com.epam.jwd.core_final.service.SpaceshipService;
 import com.epam.jwd.core_final.service.impl.CrewServiceImpl;
+import com.epam.jwd.core_final.service.impl.SpaceshipServiceImpl;
 import com.epam.jwd.core_final.strategy.impl.InlineFileStrategy;
 import com.epam.jwd.core_final.strategy.impl.MultilineFileStrategy;
 
@@ -48,20 +51,10 @@ public class NassaContext implements ApplicationContext {
     public void init() throws InvalidStateException {
         InlineFileStrategy inlineFileStrategy = new InlineFileStrategy();
         inlineFileStrategy.read();
-        crewMembers.forEach(crew -> {
-            System.out.println("Rank: " + crew.getRank());
-            System.out.println("Name: " + crew.getName());
-            System.out.println("Role: " + crew.getRole());
-            System.out.println();
-        });
-//        MultilineFileStrategy multilineFileStrategy = new MultilineFileStrategy();
-//        multilineFileStrategy.read();
-//        spaceships.forEach(spaceship -> {
-//            System.out.println("Name: " + spaceship.getName());
-//            System.out.println("Distance: " + spaceship.getFlightDistance());
-//            //System.out.println("Map: " + spaceship.);
-//            System.out.println();
-//        });
+
+        MultilineFileStrategy multilineFileStrategy = new MultilineFileStrategy();
+        multilineFileStrategy.read();
+
         Optional<CrewMember> crewMember = CrewServiceImpl.getInstance().findCrewMemberByCriteria(
                 new CrewMemberCriteria.Builder() {{
                     name("Zoe Day");
@@ -72,19 +65,15 @@ public class NassaContext implements ApplicationContext {
                 }}.build()
         );
 
-        Collection<CrewMember> crewMemberCollection = CrewServiceImpl.getInstance().findAllCrewMembersByCriteria(
-                new CrewMemberCriteria.Builder() {{
-                    //name("Zoe Day");
-                    //id(0L);
-                    role(Role.resolveRoleById(1L));
-                   // rank(Rank.resolveRankById(1L));
-                    //isReadyForNextMissions(true);
+        Optional<Spaceship> spaceship = SpaceshipServiceImpl.getInstance().findSpaceshipByCriteria(
+                new SpaceshipCriteria.Builder() {{
+                    flightDistance(4870L);
+                    isReadyForNextMissions(true);
                 }}.build()
         );
 
-        crewMemberCollection.stream().map(AbstractBaseEntity::getName).forEach(System.out::println);
-
-        crewMember.ifPresent(member -> System.out.println("Found:\n" + "Name: " + member.getName()));
+        crewMember.ifPresent(member -> System.out.println("Found crewmate:\n" + "Name: " + member.getName()));
+        spaceship.ifPresent(ship -> System.out.println("Found spaceship:\n" + "Name: " + ship.getName()));
         //throw new InvalidStateException();
     }
 }

@@ -20,13 +20,11 @@ public class MultilineFileStrategy implements FileStrategy {
                 + "/"
                 + PropertyReaderUtil.getProperties().getProperty("spaceshipsFileName");
         try {
-
             String[] separatedCrewInput = Stream.of(Files
                     .readString(Path.of(path)))
                     .map(str -> str.split("\\r?\\n"))
                     .findAny()
                     .get();
-
 
             for (String s : separatedCrewInput) {
                 if (s.startsWith("#")) continue;
