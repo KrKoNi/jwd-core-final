@@ -21,34 +21,40 @@ public class FlightMissionCriteria extends Criteria<FlightMission> {
     private final MissionResult missionResult;
 
     public static class Builder extends Criteria.Builder {
-        private LocalDate startDate = LocalDate.now();
-        private LocalDate endDate = LocalDate.MAX;
-        private Long distance = 0L;
-        private final Spaceship assignedSpaceship;
-        private final List<CrewMember> assignedCrew;
-        private MissionResult missionResult = MissionResult.PLANNED;
+        private LocalDate startDate = null;
+        private LocalDate endDate = null;
+        private Long distance = null;
+        private Spaceship assignedSpaceship = null;
+        private List<CrewMember> assignedCrew = null;
+        private MissionResult missionResult = null;
 
-        public Builder(Spaceship assignedSpaceship, List<CrewMember> assignedCrew) {
+        public Builder assignedSpaceship(Spaceship assignedSpaceship) {
             this.assignedSpaceship = assignedSpaceship;
-            this.assignedCrew = assignedCrew;
+            return this;
         }
 
-        public Builder setStartDate(LocalDate startDate) {
+
+        public Builder assignedCrew(List<CrewMember> assignedCrew) {
+            this.assignedCrew = assignedCrew;
+            return this;
+        }
+
+        public Builder startDate(LocalDate startDate) {
             this.startDate = startDate;
             return this;
         }
 
-        public Builder setEndDate(LocalDate endDate) {
+        public Builder endDate(LocalDate endDate) {
             this.endDate = endDate;
             return this;
         }
 
-        public Builder setDistance(Long distance) {
+        public Builder distance(Long distance) {
             this.distance = distance;
             return this;
         }
 
-        public Builder setMissionResult(MissionResult missionResult) {
+        public Builder missionResult(MissionResult missionResult) {
             this.missionResult = missionResult;
             return this;
         }
