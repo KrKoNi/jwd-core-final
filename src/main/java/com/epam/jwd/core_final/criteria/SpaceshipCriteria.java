@@ -20,7 +20,7 @@ public class SpaceshipCriteria extends Criteria<Spaceship> {
     public static class Builder extends Criteria.Builder {
         private Map<Role, Short> crew = null;
         private Long flightDistance = null;
-        private Boolean isReadyForNextMissions = null;
+        private Boolean isReadyForNextMissions = true;
 
         public Builder flightDistance(Long flightDistance) {
             this.flightDistance = flightDistance;
