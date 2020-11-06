@@ -58,7 +58,6 @@ public class NassaContext implements ApplicationContext {
         Optional<CrewMember> crewMember = CrewServiceImpl.getInstance().findCrewMemberByCriteria(
                 new CrewMemberCriteria.Builder() {{
                     name("Zoe Day");
-                    id(0L);
                     role(Role.resolveRoleById(1L));
                     rank(Rank.resolveRankById(1L));
                     isReadyForNextMissions(true);
@@ -71,7 +70,6 @@ public class NassaContext implements ApplicationContext {
                     isReadyForNextMissions(true);
                 }}.build()
         );
-
         crewMember.ifPresent(member -> System.out.println("Found crewmate:\n" + "Name: " + member.getName()));
         spaceship.ifPresent(ship -> System.out.println("Found spaceship:\n" + "Name: " + ship.getName()));
         //throw new InvalidStateException();
