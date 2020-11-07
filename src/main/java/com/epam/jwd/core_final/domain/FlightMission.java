@@ -1,6 +1,6 @@
 package com.epam.jwd.core_final.domain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -15,37 +15,34 @@ import java.util.List;
  * missionResult {@link MissionResult}
  */
 public class FlightMission extends AbstractBaseEntity {
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     private Long distance;
     private Spaceship assignedSpaceship;
     private List<CrewMember> assignedCrew;
     private MissionResult missionResult;
 
-    public FlightMission(String missionName, LocalDate startDate, LocalDate endDate, Long distance,
-                         Spaceship assignedSpaceship, List<CrewMember> assignedCrew, MissionResult missionResult) {
+    public FlightMission(String missionName, LocalDateTime startDate, LocalDateTime endDate, Long distance) {
         super(missionName);
         this.startDate = startDate;
         this.endDate = endDate;
         this.distance = distance;
-        this.assignedSpaceship = assignedSpaceship;
-        this.assignedCrew = assignedCrew;
-        this.missionResult = missionResult;
+        this.missionResult = MissionResult.PLANNED;
     }
 
-    public LocalDate getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 
@@ -80,6 +77,4 @@ public class FlightMission extends AbstractBaseEntity {
     public void setMissionResult(MissionResult missionResult) {
         this.missionResult = missionResult;
     }
-
-    // todo
 }
