@@ -1,7 +1,5 @@
 package com.epam.jwd.core_final.domain;
 
-import com.epam.jwd.core_final.service.impl.CrewServiceImpl;
-
 /**
  * Expected fields:
  * <p>

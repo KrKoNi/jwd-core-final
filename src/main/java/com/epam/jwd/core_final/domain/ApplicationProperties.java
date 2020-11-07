@@ -1,7 +1,5 @@
 package com.epam.jwd.core_final.domain;
 
-import com.epam.jwd.core_final.service.impl.MissionServiceImpl;
-
 /**
  * This class should be IMMUTABLE!
  * <p>

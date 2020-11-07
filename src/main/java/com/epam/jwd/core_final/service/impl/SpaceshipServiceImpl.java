@@ -1,10 +1,8 @@
 package com.epam.jwd.core_final.service.impl;
 
 import com.epam.jwd.core_final.context.impl.NassaContext;
-import com.epam.jwd.core_final.criteria.CrewMemberCriteria;
 import com.epam.jwd.core_final.criteria.Criteria;
 import com.epam.jwd.core_final.criteria.SpaceshipCriteria;
-import com.epam.jwd.core_final.domain.CrewMember;
 import com.epam.jwd.core_final.domain.FlightMission;
 import com.epam.jwd.core_final.domain.Role;
 import com.epam.jwd.core_final.domain.Spaceship;
@@ -15,7 +13,6 @@ import com.epam.jwd.core_final.service.SpaceshipService;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -83,7 +80,6 @@ public class SpaceshipServiceImpl implements SpaceshipService {
         }}.build());
 
         if (spaceshipOptional.isPresent()) {
-            ;
             throw new EntityDuplicateException("Spaceship with given name already exists");
         }
         Collection<Spaceship> spaceships = findAllSpaceships();

@@ -28,6 +28,6 @@ public interface SpaceshipService {
     void assignSpaceshipOnMission(Spaceship spaceship, FlightMission mission) throws RuntimeException;
 
     // todo create custom exception for case, when crewMember is not able to be created (for example - duplicate.
-    // spaceship unique criteria - only name!
+
     Spaceship createSpaceship(String name, Long distance, Map<Role, Short> crew) throws RuntimeException, EntityDuplicateException;
 }

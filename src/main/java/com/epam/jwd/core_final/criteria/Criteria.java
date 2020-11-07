@@ -2,7 +2,6 @@ package com.epam.jwd.core_final.criteria;
 
 import com.epam.jwd.core_final.domain.BaseEntity;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
 /**
