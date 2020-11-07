@@ -20,10 +20,6 @@ public class Spaceship extends AbstractBaseEntity {
         isReadyForNextMissions = true;
     }
 
-    public void addCrew(CrewMember ... crewMembers) {
-
-    }
-
     public Long getFlightDistance() {
         return flightDistance;
     }

@@ -14,6 +14,18 @@ public class CrewMemberCriteria extends Criteria<CrewMember> {
     private final Rank rank;
     private final Boolean isReadyForNextMissions;
 
+    public Boolean getReadyForNextMissions() {
+        return isReadyForNextMissions;
+    }
+
+    public Rank getRank() {
+        return rank;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
     public static class Builder extends Criteria.Builder {
         private Role role = null;
         private Rank rank = null;
@@ -53,8 +65,8 @@ public class CrewMemberCriteria extends Criteria<CrewMember> {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         CrewMemberCriteria that = (CrewMemberCriteria) o;
-        return (role == null || that.role == null || role == that.role) &&
-                (rank == null || that.rank == null || rank == that.rank) &&
+        return role == that.role &&
+                rank == that.rank &&
                 Objects.equals(isReadyForNextMissions, that.isReadyForNextMissions);
     }
 

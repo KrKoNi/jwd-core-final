@@ -12,6 +12,14 @@ public abstract class Criteria<T extends BaseEntity> {
     private final String name;
     private final Long id;
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public static class Builder<T extends Builder<T>> {
         private String name = null;
         private Long id = null;
@@ -41,8 +49,8 @@ public abstract class Criteria<T extends BaseEntity> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Criteria<?> criteria = (Criteria<?>) o;
-        return (Objects.equals(name, criteria.name) || name == null || criteria.name == null) &&
-                (Objects.equals(id, criteria.id) || id == null || criteria.id == null);
+        return Objects.equals(name, criteria.name) &&
+                Objects.equals(id, criteria.id);
     }
 
     @Override

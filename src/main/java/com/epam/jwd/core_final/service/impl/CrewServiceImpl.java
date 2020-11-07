@@ -7,6 +7,7 @@ import com.epam.jwd.core_final.criteria.Criteria;
 import com.epam.jwd.core_final.domain.CrewMember;
 import com.epam.jwd.core_final.domain.Rank;
 import com.epam.jwd.core_final.domain.Role;
+import com.epam.jwd.core_final.exception.EntityDuplicateException;
 import com.epam.jwd.core_final.exception.InvalidStateException;
 import com.epam.jwd.core_final.factory.impl.CrewMemberFactory;
 import com.epam.jwd.core_final.service.CrewService;
@@ -39,38 +40,25 @@ public class CrewServiceImpl implements CrewService {
     @Override
     public List<CrewMember> findAllCrewMembersByCriteria(Criteria<? extends CrewMember> criteria) {
         List<CrewMember> crewMembers = findAllCrewMembers();
-        return crewMembers.stream()
-                .filter(crewMember -> Objects
-                        .equals(criteria,
-                            new CrewMemberCriteria.Builder() {{
-                                    name(crewMember.getName());
-                                    id(crewMember.getId());
-                                    rank(crewMember.getRank());
-                                    role(crewMember.getRole());
-                                    isReadyForNextMissions(crewMember.getReadyForNextMissions());
-                                }}.build()
-                        )
-                )
-                .collect(Collectors.toList());
+        CrewMemberCriteria crewMemberCriteria = (CrewMemberCriteria) criteria;
+        return crewMembers.stream().filter(crewMember -> (
+                (crewMember.getName().equals( crewMemberCriteria.getName()) || crewMemberCriteria.getName() == null)
+                        && (crewMember.getRank() == crewMemberCriteria.getRank() || crewMemberCriteria.getRank() == null)
+                        && (crewMember.getReadyForNextMissions() == crewMemberCriteria.getReadyForNextMissions() || crewMemberCriteria.getReadyForNextMissions() == null)
+                        && (crewMember.getRole() == crewMemberCriteria.getRole() || crewMemberCriteria.getRole() == null)
+        )).collect(Collectors.toList());
     }
 
     @Override
     public Optional<CrewMember> findCrewMemberByCriteria(Criteria<? extends CrewMember> criteria) {
         List<CrewMember> crewMembers = findAllCrewMembers();
-
-        return crewMembers.stream()
-                .filter(crewMember -> Objects
-                        .equals(criteria,
-                                new CrewMemberCriteria.Builder() {{
-                                    name(crewMember.getName());
-                                    id(crewMember.getId());
-                                    rank(crewMember.getRank());
-                                    role(crewMember.getRole());
-                                    isReadyForNextMissions(crewMember.getReadyForNextMissions());
-                                }}.build()
-                        )
-                )
-                .findFirst();
+        CrewMemberCriteria crewMemberCriteria = (CrewMemberCriteria) criteria;
+        return crewMembers.stream().filter(crewMember -> (
+                (crewMember.getName().equals( crewMemberCriteria.getName()) || crewMemberCriteria.getName() == null)
+                        && (crewMember.getRank() == crewMemberCriteria.getRank() || crewMemberCriteria.getRank() == null)
+                        && (crewMember.getReadyForNextMissions() == crewMemberCriteria.getReadyForNextMissions() || crewMemberCriteria.getReadyForNextMissions() == null)
+                        && (crewMember.getRole() == crewMemberCriteria.getRole() || crewMemberCriteria.getRole() == null)
+        )).findFirst();
     }
 
     @Override
@@ -84,8 +72,14 @@ public class CrewServiceImpl implements CrewService {
     }
 
     @Override
-    public CrewMember createCrewMember(Role role, String name, Rank rank) throws RuntimeException {
+    public CrewMember createCrewMember(Role role, String name, Rank rank) throws RuntimeException, EntityDuplicateException {
         CrewMember crewMember = CrewMemberFactory.getInstance().create(role, name, rank);
+        Optional<CrewMember> crewMemberOptional = findCrewMemberByCriteria(new CrewMemberCriteria.Builder() {{
+            name(name);
+        }}.build());
+        if (crewMemberOptional.isPresent()) {
+            throw new EntityDuplicateException("Crew member with given name already exists");
+        }
         Collection<CrewMember> crewMembers = NassaContext.getInstance().retrieveBaseEntityList(CrewMember.class);
         crewMembers.add(crewMember);
         return crewMember;

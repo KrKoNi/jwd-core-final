@@ -13,22 +13,23 @@ import java.util.Objects;
  */
 public class SpaceshipCriteria extends Criteria<Spaceship> {
 
-    private final Map<Role, Short> crew;
     private final Long flightDistance;
     private final Boolean isReadyForNextMissions;
 
+    public Boolean getReadyForNextMissions() {
+        return isReadyForNextMissions;
+    }
+
+    public Long getFlightDistance() {
+        return flightDistance;
+    }
+
     public static class Builder extends Criteria.Builder {
-        private Map<Role, Short> crew = null;
         private Long flightDistance = null;
         private Boolean isReadyForNextMissions = true;
 
         public Builder flightDistance(Long flightDistance) {
             this.flightDistance = flightDistance;
-            return this;
-        }
-
-        public Builder crew(Map<Role, Short> crew) {
-            this.crew = crew;
             return this;
         }
 
@@ -45,7 +46,6 @@ public class SpaceshipCriteria extends Criteria<Spaceship> {
 
     private SpaceshipCriteria(Builder builder) {
         super(builder);
-        crew = builder.crew;
         flightDistance = builder.flightDistance;
         isReadyForNextMissions = builder.isReadyForNextMissions;
     }
@@ -56,13 +56,12 @@ public class SpaceshipCriteria extends Criteria<Spaceship> {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         SpaceshipCriteria that = (SpaceshipCriteria) o;
-        return (Objects.equals(crew, that.crew) || crew == null || that.crew == null) &&
-                (Objects.equals(flightDistance, that.flightDistance) || flightDistance == null || that.flightDistance == null) &&
-                (Objects.equals(isReadyForNextMissions, that.isReadyForNextMissions) || isReadyForNextMissions == null || that.isReadyForNextMissions == null);
+        return Objects.equals(flightDistance, that.flightDistance) &&
+                Objects.equals(isReadyForNextMissions, that.isReadyForNextMissions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), crew, flightDistance, isReadyForNextMissions);
+        return Objects.hash(super.hashCode(), flightDistance, isReadyForNextMissions);
     }
 }
