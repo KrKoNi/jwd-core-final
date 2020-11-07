@@ -1,6 +1,7 @@
 package com.epam.jwd.core_final.strategy.impl;
 
 import com.epam.jwd.core_final.domain.Role;
+import com.epam.jwd.core_final.exception.EntityDuplicateException;
 import com.epam.jwd.core_final.service.impl.SpaceshipServiceImpl;
 import com.epam.jwd.core_final.strategy.FileStrategy;
 import com.epam.jwd.core_final.util.PropertyReaderUtil;
@@ -40,9 +41,11 @@ public class MultilineFileStrategy implements FileStrategy {
                 for (int i = 1; i < separatedMap.length; i+=2) {
                     crewMap.put(Role.resolveRoleById(Long.valueOf(separatedMap[i])), Short.valueOf(separatedMap[i+1]));
                 }
-
-                SpaceshipServiceImpl.getInstance().createSpaceship(name, distance, crewMap);
-
+                try {
+                    SpaceshipServiceImpl.getInstance().createSpaceship(name, distance, crewMap);
+                } catch (EntityDuplicateException e) {
+                    System.out.println(e);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

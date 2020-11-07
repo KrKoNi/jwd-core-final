@@ -2,6 +2,7 @@ package com.epam.jwd.core_final.strategy.impl;
 
 import com.epam.jwd.core_final.domain.Rank;
 import com.epam.jwd.core_final.domain.Role;
+import com.epam.jwd.core_final.exception.EntityDuplicateException;
 import com.epam.jwd.core_final.service.impl.CrewServiceImpl;
 import com.epam.jwd.core_final.strategy.FileStrategy;
 import com.epam.jwd.core_final.util.PropertyReaderUtil;
@@ -37,8 +38,12 @@ public class InlineFileStrategy implements FileStrategy {
                         Role role = Role.resolveRoleById(Long.valueOf(temp[0]));
                         String name = temp[1];
                         Rank rank = Rank.resolveRankById(Long.valueOf(temp[2]));
-                        CrewServiceImpl.getInstance().createCrewMember(role, name, rank);
-                    });
+                try {
+                    CrewServiceImpl.getInstance().createCrewMember(role, name, rank);
+                } catch (EntityDuplicateException e) {
+                    e.printStackTrace();
+                }
+            });
 
 
         } catch (IOException e) {
