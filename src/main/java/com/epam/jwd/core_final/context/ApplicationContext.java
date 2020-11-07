@@ -1,6 +1,7 @@
 package com.epam.jwd.core_final.context;
 
 import com.epam.jwd.core_final.domain.BaseEntity;
+import com.epam.jwd.core_final.exception.EntityDuplicateException;
 import com.epam.jwd.core_final.exception.InvalidStateException;
 
 import java.util.Collection;

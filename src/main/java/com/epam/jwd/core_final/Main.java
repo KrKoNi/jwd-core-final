@@ -2,16 +2,23 @@ package com.epam.jwd.core_final;
 
 import com.epam.jwd.core_final.context.Application;
 import com.epam.jwd.core_final.context.ApplicationMenu;
-import com.epam.jwd.core_final.domain.CrewMember;
+import com.epam.jwd.core_final.exception.EntityDuplicateException;
 import com.epam.jwd.core_final.exception.InvalidStateException;
-import com.epam.jwd.core_final.strategy.impl.InlineFileStrategy;
-import com.epam.jwd.core_final.strategy.impl.MultilineFileStrategy;
 import com.epam.jwd.core_final.util.PropertyReaderUtil;
 
-public class Main {
-    public static void main(String[] args) throws InvalidStateException {
-        PropertyReaderUtil.loadProperties();
+import java.io.IOException;
 
-        Application.start();
+public class Main {
+    public static void main(String[] args){
+        PropertyReaderUtil.loadProperties();
+        ApplicationMenu applicationMenu = null;
+        try {
+            applicationMenu = Application.start();
+            applicationMenu.handleUserInput(applicationMenu.printAvailableOptions());
+        } catch (IOException | InvalidStateException e) {
+            System.out.println(e);
+        }
+        //applicationMenu.getApplicationContext();
+
     }
 }
