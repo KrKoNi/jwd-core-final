@@ -1,8 +1,11 @@
 package com.epam.jwd.core_final.context;
 
+import com.epam.jwd.core_final.context.impl.NassaContext;
+import com.epam.jwd.core_final.domain.ApplicationProperties;
 import com.epam.jwd.core_final.domain.CrewMember;
 import com.epam.jwd.core_final.domain.FlightMission;
 import com.epam.jwd.core_final.domain.Spaceship;
+import com.epam.jwd.core_final.exception.FreeSpaceshipAbsentException;
 import com.epam.jwd.core_final.service.impl.CrewServiceImpl;
 import com.epam.jwd.core_final.service.impl.MissionServiceImpl;
 import com.epam.jwd.core_final.service.impl.SpaceshipServiceImpl;
@@ -12,6 +15,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Scanner;
 
@@ -28,9 +32,12 @@ public interface ApplicationMenu {
                 "4. View all missions\n" +
                 "5. Print all crew members to JSON\n" +
                 "6. Print all spaceships to JSON\n" +
+                "7. Print all missions to JSON\n" +
                 "0. Close the application";
         return availableOptions;
     }
+
+
 
     default void handleUserInput(String o) throws IOException {
         Scanner scanner = new Scanner(System.in);
@@ -38,7 +45,13 @@ public interface ApplicationMenu {
         Collection<CrewMember> crewMembers = CrewServiceImpl.getInstance().findAllCrewMembers();
         Collection<Spaceship> spaceships = SpaceshipServiceImpl.getInstance().findAllSpaceships();
         Collection<FlightMission> missions = MissionServiceImpl.getInstance().findAllMissions();
+
         ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+
+        ApplicationProperties applicationProperties = NassaContext.getInstance().getApplicationProperties();
+
+
+
         while (true) {
             System.out.println(o);
             choice = scanner.nextInt();
@@ -47,11 +60,21 @@ public interface ApplicationMenu {
                     System.out.println("Closing app");
                     return;
                 case 1:
-                    System.out.println("Print mission name:");
+                    System.out.println("Enter mission name:");
                     String name = scanner.next();
-                    System.out.println("Print flight distance:");
+                    System.out.println("Enter flight distance:");
                     Long distance = scanner.nextLong();
-                    MissionServiceImpl.getInstance().createMission(name, LocalDateTime.now(), LocalDateTime.MAX, distance);
+                    System.out.println("Enter start date in format " + applicationProperties.getDateTimeFormat());
+                    LocalDateTime startDate = LocalDateTime.parse(scanner.next(), DateTimeFormatter.ofPattern(applicationProperties.getDateTimeFormat()));
+                    LocalDateTime endDate = LocalDateTime.parse(scanner.next(), DateTimeFormatter.ofPattern(applicationProperties.getDateTimeFormat()));
+                    FlightMission flightMission = MissionServiceImpl.getInstance().createMission(name, startDate, endDate, distance);
+                    try {
+                        SpaceshipServiceImpl.getInstance().assignSpaceshipOnMission(flightMission);
+
+                    } catch (FreeSpaceshipAbsentException e) {
+                        e.printStackTrace();
+                    }
+                    CrewServiceImpl.getInstance().assignCrewMemberOnMission(flightMission);
                     break;
                 case 2:
                     crewMembers.stream()
@@ -89,7 +112,13 @@ public interface ApplicationMenu {
                         objectMapper.writeValue(spaceshipFile, spaceships);
                     }
                     System.out.println("Finished");
-
+                    break;
+                case 7:
+                    System.out.println("Writing to missions.json");
+                    try (FileOutputStream missionFile = new FileOutputStream("src/main/resources/output/mission.json")) {
+                        objectMapper.writeValue(missionFile, missions);
+                    }
+                    System.out.println("Finished");
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + choice);
