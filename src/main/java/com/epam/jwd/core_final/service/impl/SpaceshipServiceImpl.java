@@ -69,22 +69,23 @@ public class SpaceshipServiceImpl implements SpaceshipService {
     }
 
     @Override
-    public void assignSpaceshipOnMission(FlightMission mission) throws RuntimeException, FreeSpaceshipAbsentException {
+    public void assignSpaceshipOnMission(FlightMission mission, Spaceship spaceship) {
+        spaceship.setReadyForNextMissions(false);
+        mission.setAssignedSpaceship(spaceship);
+    }
+
+
+    public void assignRandomSpaceshipOnMission(FlightMission mission) throws RuntimeException, FreeSpaceshipAbsentException {
         Optional<Spaceship> spaceship = findSpaceshipByCriteria(new SpaceshipCriteria.Builder() {{
             flightDistance(mission.getDistance());
             isReadyForNextMissions(true);
         }}.build());
 
-        ;
-
-        spaceship.ifPresent(ship -> {
-            ship.setReadyForNextMissions(false);
-            mission.setAssignedSpaceship(ship);
-        });
-
         if (spaceship.isEmpty()) {
             throw new FreeSpaceshipAbsentException("There is no spaceship which can complete mission");
         }
+
+        assignSpaceshipOnMission(mission, spaceship.get());
 
     }
 

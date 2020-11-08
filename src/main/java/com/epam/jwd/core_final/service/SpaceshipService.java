@@ -26,7 +26,7 @@ public interface SpaceshipService {
     Spaceship updateSpaceshipDetails(Spaceship oldSpaceship, Spaceship newSpaceship);
 
     // todo create custom exception for case, when spaceship is not able to be assigned
-    void assignSpaceshipOnMission(FlightMission mission) throws RuntimeException, FreeSpaceshipAbsentException;
+    void assignSpaceshipOnMission(FlightMission mission, Spaceship spaceship) throws RuntimeException, FreeSpaceshipAbsentException;
 
     // todo create custom exception for case, when crewMember is not able to be created (for example - duplicate.
 

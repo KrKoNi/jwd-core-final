@@ -1,9 +1,11 @@
 package com.epam.jwd.core_final.context;
 
 import com.epam.jwd.core_final.context.impl.NassaContext;
+import com.epam.jwd.core_final.criteria.SpaceshipCriteria;
 import com.epam.jwd.core_final.domain.ApplicationProperties;
 import com.epam.jwd.core_final.domain.CrewMember;
 import com.epam.jwd.core_final.domain.FlightMission;
+import com.epam.jwd.core_final.domain.Role;
 import com.epam.jwd.core_final.domain.Spaceship;
 import com.epam.jwd.core_final.exception.FreeSpaceshipAbsentException;
 import com.epam.jwd.core_final.service.impl.CrewServiceImpl;
@@ -14,9 +16,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.List;
 import java.util.Scanner;
 
 // todo replace Object with your own types
@@ -38,7 +42,6 @@ public interface ApplicationMenu {
     }
 
 
-
     default void handleUserInput(String o) throws IOException {
         Scanner scanner = new Scanner(System.in);
         int choice;
@@ -49,7 +52,6 @@ public interface ApplicationMenu {
         ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
         ApplicationProperties applicationProperties = NassaContext.getInstance().getApplicationProperties();
-
 
 
         while (true) {
@@ -64,17 +66,34 @@ public interface ApplicationMenu {
                     String name = scanner.next();
                     System.out.println("Enter flight distance:");
                     Long distance = scanner.nextLong();
-                    System.out.println("Enter start date in format " + applicationProperties.getDateTimeFormat());
-                    LocalDateTime startDate = LocalDateTime.parse(scanner.next(), DateTimeFormatter.ofPattern(applicationProperties.getDateTimeFormat()));
-                    LocalDateTime endDate = LocalDateTime.parse(scanner.next(), DateTimeFormatter.ofPattern(applicationProperties.getDateTimeFormat()));
-                    FlightMission flightMission = MissionServiceImpl.getInstance().createMission(name, startDate, endDate, distance);
-                    try {
-                        SpaceshipServiceImpl.getInstance().assignSpaceshipOnMission(flightMission);
+//                    System.out.println("Enter start date in format " + applicationProperties.getDateTimeFormat());
+//                    LocalDateTime startDate = LocalDateTime.parse(scanner.next(), DateTimeFormatter.ofPattern(applicationProperties.getDateTimeFormat()));
+//                    LocalDateTime endDate = LocalDateTime.parse(scanner.next(), DateTimeFormatter.ofPattern(applicationProperties.getDateTimeFormat()));
+                    FlightMission flightMission = MissionServiceImpl.getInstance().createMission(name, LocalDateTime.now(), LocalDateTime.MAX, distance);
 
-                    } catch (FreeSpaceshipAbsentException e) {
-                        e.printStackTrace();
+                    List<Spaceship> spaceshipCollection = SpaceshipServiceImpl.getInstance()
+                            .findAllSpaceshipsByCriteria(new SpaceshipCriteria.Builder() {{
+                                flightDistance(distance);
+                                isReadyForNextMissions(true);
+                            }}.build());
+                    int i = 0;
+                    System.out.println("Choose spaceship for mission");
+                    for (Spaceship spaceship : spaceshipCollection) {
+                        i++;
+                        System.out.println(i + ". " + spaceship.getName() + ", number of members " +
+                                (spaceship.getCrew().get(Role.MISSION_SPECIALIST)
+                                        + spaceship.getCrew().get(Role.FLIGHT_ENGINEER)
+                                        + spaceship.getCrew().get(Role.PILOT)
+                                        + spaceship.getCrew().get(Role.COMMANDER))
+                        );
                     }
+                    int choice2 = scanner.nextInt();
+                    System.out.println("Spaceship " + spaceshipCollection.get(choice2 - 1).getName() + " was assigned");
+
+                    SpaceshipServiceImpl.getInstance().assignSpaceshipOnMission(flightMission, spaceshipCollection.get(choice2 - 1));
+
                     CrewServiceImpl.getInstance().assignCrewMemberOnMission(flightMission);
+
                     break;
                 case 2:
                     crewMembers.stream()
@@ -101,21 +120,21 @@ public interface ApplicationMenu {
                     break;
                 case 5:
                     System.out.println("Writing to crewmember.json");
-                    try (FileOutputStream crewmemberFile = new FileOutputStream("src/main/resources/output/crewmember.json")) {
+                    try (FileOutputStream crewmemberFile = new FileOutputStream("src/main/resources/" + applicationProperties.getOutputRootDir() + "/crewmember.json")) {
                         objectMapper.writeValue(crewmemberFile, crewMembers);
                     }
                     System.out.println("Finished");
                     break;
                 case 6:
                     System.out.println("Writing to spaceship.json");
-                    try (FileOutputStream spaceshipFile = new FileOutputStream("src/main/resources/output/spaceship.json")) {
+                    try (FileOutputStream spaceshipFile = new FileOutputStream("src/main/resources/" + applicationProperties.getOutputRootDir() + "/spaceship.json")) {
                         objectMapper.writeValue(spaceshipFile, spaceships);
                     }
                     System.out.println("Finished");
                     break;
                 case 7:
                     System.out.println("Writing to missions.json");
-                    try (FileOutputStream missionFile = new FileOutputStream("src/main/resources/output/mission.json")) {
+                    try (FileOutputStream missionFile = new FileOutputStream("src/main/resources/" + applicationProperties.getOutputRootDir() + "/mission.json")) {
                         objectMapper.writeValue(missionFile, missions);
                     }
                     System.out.println("Finished");

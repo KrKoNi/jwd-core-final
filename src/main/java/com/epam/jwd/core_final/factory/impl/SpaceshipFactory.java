@@ -8,12 +8,13 @@ import java.util.Map;
 
 public class SpaceshipFactory implements EntityFactory<Spaceship> {
 
-    private SpaceshipFactory() {}
+    private SpaceshipFactory() {
+    }
 
     private final static SpaceshipFactory INSTANCE = new SpaceshipFactory();
 
     public static SpaceshipFactory getInstance() {
-            return INSTANCE;
+        return INSTANCE;
     }
 
     @Override

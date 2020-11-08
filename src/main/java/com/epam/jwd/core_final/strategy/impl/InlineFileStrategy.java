@@ -1,8 +1,5 @@
 package com.epam.jwd.core_final.strategy.impl;
 
-import com.epam.jwd.core_final.context.ApplicationMenu;
-import com.epam.jwd.core_final.context.impl.NassaContext;
-import com.epam.jwd.core_final.domain.CrewMember;
 import com.epam.jwd.core_final.domain.Rank;
 import com.epam.jwd.core_final.domain.Role;
 import com.epam.jwd.core_final.exception.EntityDuplicateException;

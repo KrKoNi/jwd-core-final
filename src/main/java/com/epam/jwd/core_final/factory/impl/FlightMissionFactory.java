@@ -15,6 +15,7 @@ public class FlightMissionFactory implements EntityFactory<FlightMission> {
     public static FlightMissionFactory getInstance() {
         return INSTANCE;
     }
+
     @Override
     public FlightMission create(Object... args) {
         return new FlightMission((String) args[0], (LocalDateTime) args[1], (LocalDateTime) args[2], (Long) args[3]);

@@ -19,7 +19,7 @@ public class CrewMemberFactory implements EntityFactory<CrewMember> {
 
     @Override
     public CrewMember create(Object... args) {
-        return new CrewMember((Role)args[0], (String) args[1], (Rank)args[2]);
+        return new CrewMember((Role) args[0], (String) args[1], (Rank) args[2]);
     }
 
 }

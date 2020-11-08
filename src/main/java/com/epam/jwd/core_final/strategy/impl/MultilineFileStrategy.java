@@ -1,6 +1,5 @@
 package com.epam.jwd.core_final.strategy.impl;
 
-import com.epam.jwd.core_final.context.impl.NassaContext;
 import com.epam.jwd.core_final.domain.Role;
 import com.epam.jwd.core_final.exception.EntityDuplicateException;
 import com.epam.jwd.core_final.service.impl.SpaceshipServiceImpl;
@@ -47,8 +46,8 @@ public class MultilineFileStrategy implements FileStrategy {
             String[] separatedMap = stringMap.split("[{}:,]");
 
             Map<Role, Short> crewMap = new HashMap<>();
-            for (int i = 1; i < separatedMap.length; i+=2) {
-                crewMap.put(Role.resolveRoleById(Long.valueOf(separatedMap[i])), Short.valueOf(separatedMap[i+1]));
+            for (int i = 1; i < separatedMap.length; i += 2) {
+                crewMap.put(Role.resolveRoleById(Long.valueOf(separatedMap[i])), Short.valueOf(separatedMap[i + 1]));
             }
 
             try {

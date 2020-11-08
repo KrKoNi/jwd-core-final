@@ -3,7 +3,6 @@ package com.epam.jwd.core_final.criteria;
 import com.epam.jwd.core_final.domain.CrewMember;
 import com.epam.jwd.core_final.domain.FlightMission;
 import com.epam.jwd.core_final.domain.MissionResult;
-
 import com.epam.jwd.core_final.domain.Spaceship;
 
 import java.time.LocalDate;

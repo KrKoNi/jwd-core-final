@@ -1,7 +1,5 @@
 package com.epam.jwd.core_final.strategy;
 
-import com.epam.jwd.core_final.strategy.FileStrategy;
-
 import java.io.IOException;
 
 public abstract class AbstractFile {
