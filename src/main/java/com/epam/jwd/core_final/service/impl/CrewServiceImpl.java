@@ -76,7 +76,6 @@ public class CrewServiceImpl implements CrewService {
                 role(Role.MISSION_SPECIALIST);
                 isReadyForNextMissions(true);
             }}.build());
-            ;
 
             if (crewMember.isPresent()) {
                 CrewMember crewMember1 = crewMember.get();

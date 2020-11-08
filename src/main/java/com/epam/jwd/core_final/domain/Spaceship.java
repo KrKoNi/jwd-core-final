@@ -9,7 +9,7 @@ import java.util.Map;
  */
 
 public class Spaceship extends AbstractBaseEntity {
-    private Map<Role, Short> crew;
+    private final Map<Role, Short> crew;
     private Long flightDistance;
     private Boolean isReadyForNextMissions;
 
