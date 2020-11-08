@@ -19,13 +19,12 @@ public abstract class AbstractBaseEntity implements BaseEntity {
 
     @Override
     public Long getId() {
-        // todo
         return id;
     }
 
     @Override
     public String getName() {
-        // todo
         return name;
     }
+
 }

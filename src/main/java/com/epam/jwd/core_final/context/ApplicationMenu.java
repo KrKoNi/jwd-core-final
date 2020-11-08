@@ -5,6 +5,7 @@ import com.epam.jwd.core_final.criteria.SpaceshipCriteria;
 import com.epam.jwd.core_final.domain.ApplicationProperties;
 import com.epam.jwd.core_final.domain.CrewMember;
 import com.epam.jwd.core_final.domain.FlightMission;
+import com.epam.jwd.core_final.domain.MissionResult;
 import com.epam.jwd.core_final.domain.Role;
 import com.epam.jwd.core_final.domain.Spaceship;
 import com.epam.jwd.core_final.service.impl.CrewServiceImpl;
@@ -15,10 +16,12 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 // todo replace Object with your own types
@@ -44,13 +47,14 @@ public interface ApplicationMenu {
                 "0. Back";
     }
 
-
     default void handleUserInput(String o) throws IOException {
         Scanner scanner = new Scanner(System.in);
         int choice, choice2;
         Collection<CrewMember> crewMembers = CrewServiceImpl.getInstance().findAllCrewMembers();
         Collection<Spaceship> spaceships = SpaceshipServiceImpl.getInstance().findAllSpaceships();
         Collection<FlightMission> missions = MissionServiceImpl.getInstance().findAllMissions();
+
+
 
         ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -59,7 +63,8 @@ public interface ApplicationMenu {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(applicationProperties.getDateTimeFormat());
 
         while (true) {
-            System.out.println(o);
+            missions.forEach(mission -> MissionServiceImpl.getInstance().missionStatusUpdate(mission));
+            System.out.println(printAvailableOptions());
             choice = scanner.nextInt();
 
             switch (choice) {
@@ -130,13 +135,8 @@ public interface ApplicationMenu {
                             break;
                         case 3:
                             missions.stream()
-                                .map(mission -> "{" +
-                                        "Name: " + mission.getName()
-                                        + ", flight distance: " + mission.getDistance()
-                                        + ", start date: " + mission.getStartDate()
-                                        + ", end date: " + mission.getEndDate()
-                                        + "}")
-                                .forEachOrdered(System.out::println);
+                                    .map(FlightMission::toString)
+                                    .forEachOrdered(System.out::println);
                             break;
                     }
                     break;
