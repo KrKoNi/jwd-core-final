@@ -28,7 +28,7 @@ public final class PropertyReaderUtil {
      */
 
 
-    public static void loadProperties() {
+    public static ApplicationProperties loadProperties() {
         final String propertiesFileName = "src/main/resources/application.properties";
         try (InputStream iStream = new FileInputStream(propertiesFileName)) {
             properties.load(iStream);
@@ -41,9 +41,10 @@ public final class PropertyReaderUtil {
                     Integer.valueOf(properties.getProperty("fileRefreshRate")),
                     properties.getProperty("dateTimeFormat")
             );
+            return applicationProperties;
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        return null;
     }
 }
