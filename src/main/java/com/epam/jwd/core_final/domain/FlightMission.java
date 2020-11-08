@@ -1,6 +1,7 @@
 package com.epam.jwd.core_final.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ public class FlightMission extends AbstractBaseEntity {
     private LocalDateTime endDate;
     private Long distance;
     private Spaceship assignedSpaceship;
-    private List<CrewMember> assignedCrew;
+    private List<CrewMember> assignedCrew = new ArrayList<>();
     private MissionResult missionResult;
 
     public FlightMission(String missionName, LocalDateTime startDate, LocalDateTime endDate, Long distance) {
@@ -68,6 +69,10 @@ public class FlightMission extends AbstractBaseEntity {
 
     public void setAssignedCrew(List<CrewMember> assignedCrew) {
         this.assignedCrew = assignedCrew;
+    }
+
+    public void addCrew(CrewMember crewMember) {
+        assignedCrew.add(crewMember);
     }
 
     public MissionResult getMissionResult() {
