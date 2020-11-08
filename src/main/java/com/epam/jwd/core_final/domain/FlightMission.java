@@ -1,5 +1,7 @@
 package com.epam.jwd.core_final.domain;
 
+import com.epam.jwd.core_final.service.impl.MissionServiceImpl;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,5 +83,19 @@ public class FlightMission extends AbstractBaseEntity {
 
     public void setMissionResult(MissionResult missionResult) {
         this.missionResult = missionResult;
+    }
+
+    @Override
+    public String toString() {
+        return "FlightMission{" +
+                "name=" + getName() +
+                ", id=" + getId() +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", distance=" + distance +
+                ", assignedSpaceship=" + assignedSpaceship +
+                ", progress=" + MissionServiceImpl.getInstance().calculateMissionProgress(this) +
+                ", missionResult=" + missionResult +
+                '}';
     }
 }
