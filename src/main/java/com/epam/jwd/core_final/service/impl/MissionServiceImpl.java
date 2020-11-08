@@ -2,14 +2,18 @@ package com.epam.jwd.core_final.service.impl;
 
 import com.epam.jwd.core_final.context.impl.NassaContext;
 import com.epam.jwd.core_final.criteria.Criteria;
+import com.epam.jwd.core_final.domain.CrewMember;
 import com.epam.jwd.core_final.domain.FlightMission;
+import com.epam.jwd.core_final.domain.MissionResult;
 import com.epam.jwd.core_final.factory.impl.FlightMissionFactory;
 import com.epam.jwd.core_final.service.MissionService;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 public class MissionServiceImpl implements MissionService {
 
@@ -51,4 +55,31 @@ public class MissionServiceImpl implements MissionService {
         flightMissions.add(flightMission);
         return flightMission;
     }
+
+    public Double calculateMissionProgress(FlightMission flightMission) {
+        double progress = (double) Duration.between(LocalDateTime.now(), flightMission.getStartDate()).toMillis()
+                / (double) Duration.between(flightMission.getEndDate(), flightMission.getStartDate()).toMillis();
+
+        return progress*100 > 100 ? 100 : progress < 0 ? 0 : progress*100;
+    }
+
+    public void missionStatusUpdate (FlightMission mission) {
+        if(mission.getStartDate().isBefore(LocalDateTime.now()) && mission.getMissionResult() == MissionResult.PLANNED) {
+            mission.setMissionResult(MissionResult.IN_PROGRESS);
+        }
+        if (mission.getEndDate().isBefore(LocalDateTime.now()) && mission.getMissionResult() == MissionResult.IN_PROGRESS) {
+            finishMission(mission);
+        }
+    }
+
+    public void finishMission(FlightMission mission) {
+        Random rand = new Random();
+        MissionResult missionResult = rand.nextBoolean() ? MissionResult.COMPLETED : MissionResult.FAILED;
+        mission.setMissionResult( missionResult );
+        for (CrewMember crewMember : mission.getAssignedCrew()) {
+            crewMember.setReadyForNextMissions(missionResult == MissionResult.COMPLETED);
+        }
+        mission.getAssignedSpaceship().setReadyForNextMissions(missionResult == MissionResult.COMPLETED);
+    }
+
 }
