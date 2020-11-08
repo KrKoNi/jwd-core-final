@@ -3,15 +3,20 @@ package com.epam.jwd.core_final.service.impl;
 import com.epam.jwd.core_final.context.impl.NassaContext;
 import com.epam.jwd.core_final.criteria.CrewMemberCriteria;
 import com.epam.jwd.core_final.criteria.Criteria;
+import com.epam.jwd.core_final.criteria.SpaceshipCriteria;
 import com.epam.jwd.core_final.domain.CrewMember;
+import com.epam.jwd.core_final.domain.FlightMission;
 import com.epam.jwd.core_final.domain.Rank;
 import com.epam.jwd.core_final.domain.Role;
+import com.epam.jwd.core_final.domain.Spaceship;
 import com.epam.jwd.core_final.exception.EntityDuplicateException;
+import com.epam.jwd.core_final.exception.FreeSpaceshipAbsentException;
 import com.epam.jwd.core_final.factory.impl.CrewMemberFactory;
 import com.epam.jwd.core_final.service.CrewService;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -50,10 +55,10 @@ public class CrewServiceImpl implements CrewService {
         List<CrewMember> crewMembers = findAllCrewMembers();
         CrewMemberCriteria crewMemberCriteria = (CrewMemberCriteria) criteria;
         return crewMembers.stream().filter(crewMember -> (
-                (crewMember.getName().equals( crewMemberCriteria.getName()) || crewMemberCriteria.getName() == null)
-                        && (crewMember.getRank() == crewMemberCriteria.getRank() || crewMemberCriteria.getRank() == null)
-                        && (crewMember.getReadyForNextMissions() == crewMemberCriteria.getReadyForNextMissions() || crewMemberCriteria.getReadyForNextMissions() == null)
-                        && (crewMember.getRole() == crewMemberCriteria.getRole() || crewMemberCriteria.getRole() == null)
+                ( crewMemberCriteria.getName() == null || crewMember.getName().equals( crewMemberCriteria.getName()) )
+                        && (crewMemberCriteria.getRank() == null || crewMember.getRank() == crewMemberCriteria.getRank())
+                        && (crewMemberCriteria.getReadyForNextMissions() == null || crewMember.getReadyForNextMissions() == crewMemberCriteria.getReadyForNextMissions() )
+                        && (crewMemberCriteria.getRole() == null || crewMember.getRole() == crewMemberCriteria.getRole())
         )).findFirst();
     }
 
@@ -63,7 +68,58 @@ public class CrewServiceImpl implements CrewService {
     }
 
     @Override
-    public void assignCrewMemberOnMission(CrewMember crewMember) throws RuntimeException {
+    public void assignCrewMemberOnMission(FlightMission mission) throws RuntimeException {
+        Spaceship spaceship = mission.getAssignedSpaceship();
+
+        Map<Role, Short> crew = spaceship.getCrew();
+
+        for (int i = 0; i < crew.get(Role.MISSION_SPECIALIST); i++) {
+            Optional<CrewMember> crewMember = findCrewMemberByCriteria(new CrewMemberCriteria.Builder() {{
+                role(Role.MISSION_SPECIALIST);
+                isReadyForNextMissions(true);
+            }}.build());
+;
+
+            if(crewMember.isPresent()) {
+                CrewMember crewMember1 = crewMember.get();
+                crewMember1.setReadyForNextMissions(false);
+                mission.addCrew(crewMember1);
+            }
+
+        }
+        for (int i = 0; i < crew.get(Role.FLIGHT_ENGINEER); i++) {
+            Optional<CrewMember> crewMember = findCrewMemberByCriteria(new CrewMemberCriteria.Builder() {{
+                role(Role.FLIGHT_ENGINEER);
+                isReadyForNextMissions(true);
+            }}.build());
+
+            crewMember.ifPresent(member -> {
+                member.setReadyForNextMissions(false);
+                mission.addCrew(member);
+            });
+        }
+        for (int i = 0; i < crew.get(Role.PILOT); i++) {
+            Optional<CrewMember> crewMember = findCrewMemberByCriteria(new CrewMemberCriteria.Builder() {{
+                role(Role.PILOT);
+                isReadyForNextMissions(true);
+            }}.build());
+
+            crewMember.ifPresent(member -> {
+                member.setReadyForNextMissions(false);
+                mission.addCrew(member);
+            });
+        }
+        for (int i = 0; i < crew.get(Role.COMMANDER); i++) {
+            Optional<CrewMember> crewMember = findCrewMemberByCriteria(new CrewMemberCriteria.Builder() {{
+                role(Role.COMMANDER);
+                isReadyForNextMissions(true);
+            }}.build());
+
+            crewMember.ifPresent(member -> {
+                member.setReadyForNextMissions(false);
+                mission.addCrew(member);
+            });
+        }
 
     }
 

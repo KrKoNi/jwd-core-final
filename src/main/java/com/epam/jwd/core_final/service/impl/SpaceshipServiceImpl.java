@@ -7,6 +7,7 @@ import com.epam.jwd.core_final.domain.FlightMission;
 import com.epam.jwd.core_final.domain.Role;
 import com.epam.jwd.core_final.domain.Spaceship;
 import com.epam.jwd.core_final.exception.EntityDuplicateException;
+import com.epam.jwd.core_final.exception.FreeSpaceshipAbsentException;
 import com.epam.jwd.core_final.factory.impl.SpaceshipFactory;
 import com.epam.jwd.core_final.service.SpaceshipService;
 
@@ -68,8 +69,23 @@ public class SpaceshipServiceImpl implements SpaceshipService {
     }
 
     @Override
-    public void assignSpaceshipOnMission(Spaceship spaceship, FlightMission mission) throws RuntimeException {
-        Collection<Spaceship> spaceships = findAllSpaceships();
+    public void assignSpaceshipOnMission(FlightMission mission) throws RuntimeException, FreeSpaceshipAbsentException {
+        Optional<Spaceship> spaceship = findSpaceshipByCriteria(new SpaceshipCriteria.Builder() {{
+            flightDistance(mission.getDistance());
+            isReadyForNextMissions(true);
+        }}.build());
+
+        ;
+
+        spaceship.ifPresent(ship -> {
+            ship.setReadyForNextMissions(false);
+            mission.setAssignedSpaceship(ship);
+        });
+
+        if (spaceship.isEmpty()) {
+            throw new FreeSpaceshipAbsentException("There is no spaceship which can complete mission");
+        }
+
     }
 
     @Override

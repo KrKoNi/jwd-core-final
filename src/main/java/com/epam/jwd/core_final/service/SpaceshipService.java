@@ -5,6 +5,7 @@ import com.epam.jwd.core_final.domain.FlightMission;
 import com.epam.jwd.core_final.domain.Role;
 import com.epam.jwd.core_final.domain.Spaceship;
 import com.epam.jwd.core_final.exception.EntityDuplicateException;
+import com.epam.jwd.core_final.exception.FreeSpaceshipAbsentException;
 
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ public interface SpaceshipService {
     Spaceship updateSpaceshipDetails(Spaceship oldSpaceship, Spaceship newSpaceship);
 
     // todo create custom exception for case, when spaceship is not able to be assigned
-    void assignSpaceshipOnMission(Spaceship spaceship, FlightMission mission) throws RuntimeException;
+    void assignSpaceshipOnMission(FlightMission mission) throws RuntimeException, FreeSpaceshipAbsentException;
 
     // todo create custom exception for case, when crewMember is not able to be created (for example - duplicate.
 
