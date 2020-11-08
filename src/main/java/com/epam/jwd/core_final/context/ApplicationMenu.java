@@ -7,7 +7,6 @@ import com.epam.jwd.core_final.domain.CrewMember;
 import com.epam.jwd.core_final.domain.FlightMission;
 import com.epam.jwd.core_final.domain.Role;
 import com.epam.jwd.core_final.domain.Spaceship;
-import com.epam.jwd.core_final.exception.FreeSpaceshipAbsentException;
 import com.epam.jwd.core_final.service.impl.CrewServiceImpl;
 import com.epam.jwd.core_final.service.impl.MissionServiceImpl;
 import com.epam.jwd.core_final.service.impl.SpaceshipServiceImpl;
@@ -16,7 +15,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -30,21 +28,26 @@ public interface ApplicationMenu {
     ApplicationContext getApplicationContext();
 
     default String printAvailableOptions() {
-        String availableOptions = "1. Create mission\n" +
-                "2. View all crew members\n" +
-                "3. View all spaceships\n" +
-                "4. View all missions\n" +
-                "5. Print all crew members to JSON\n" +
-                "6. Print all spaceships to JSON\n" +
-                "7. Print all missions to JSON\n" +
-                "0. Close the application";
-        return availableOptions;
+        return "1. Create mission\n" +
+                "2. View\n" +
+                "3. Update\n" +
+                "4. Print to JSON\n" +
+                "0. Close the app";
+    }
+
+
+
+    default String printEntities() {
+        return "1. Crewmembers\n" +
+                "2. Spaceships\n" +
+                "3. Missions\n" +
+                "0. Back";
     }
 
 
     default void handleUserInput(String o) throws IOException {
         Scanner scanner = new Scanner(System.in);
-        int choice;
+        int choice, choice2;
         Collection<CrewMember> crewMembers = CrewServiceImpl.getInstance().findAllCrewMembers();
         Collection<Spaceship> spaceships = SpaceshipServiceImpl.getInstance().findAllSpaceships();
         Collection<FlightMission> missions = MissionServiceImpl.getInstance().findAllMissions();
@@ -53,10 +56,12 @@ public interface ApplicationMenu {
 
         ApplicationProperties applicationProperties = NassaContext.getInstance().getApplicationProperties();
 
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(applicationProperties.getDateTimeFormat());
 
         while (true) {
             System.out.println(o);
             choice = scanner.nextInt();
+
             switch (choice) {
                 case 0:
                     System.out.println("Closing app");
@@ -64,12 +69,19 @@ public interface ApplicationMenu {
                 case 1:
                     System.out.println("Enter mission name:");
                     String name = scanner.next();
+
                     System.out.println("Enter flight distance:");
                     Long distance = scanner.nextLong();
-//                    System.out.println("Enter start date in format " + applicationProperties.getDateTimeFormat());
-//                    LocalDateTime startDate = LocalDateTime.parse(scanner.next(), DateTimeFormatter.ofPattern(applicationProperties.getDateTimeFormat()));
-//                    LocalDateTime endDate = LocalDateTime.parse(scanner.next(), DateTimeFormatter.ofPattern(applicationProperties.getDateTimeFormat()));
-                    FlightMission flightMission = MissionServiceImpl.getInstance().createMission(name, LocalDateTime.now(), LocalDateTime.MAX, distance);
+
+                    System.out.println("Enter start date in format " + applicationProperties.getDateTimeFormat());
+                    scanner.nextLine();
+                    LocalDateTime startDate = LocalDateTime.parse(scanner.nextLine(), dateTimeFormatter);
+
+                    System.out.println("Enter finish date in format " + applicationProperties.getDateTimeFormat());
+                    LocalDateTime endDate = LocalDateTime.parse(scanner.nextLine(), dateTimeFormatter);
+
+                    FlightMission flightMission = MissionServiceImpl
+                            .getInstance().createMission(name, startDate, endDate, distance);
 
                     List<Spaceship> spaceshipCollection = SpaceshipServiceImpl.getInstance()
                             .findAllSpaceshipsByCriteria(new SpaceshipCriteria.Builder() {{
@@ -81,63 +93,85 @@ public interface ApplicationMenu {
                     for (Spaceship spaceship : spaceshipCollection) {
                         i++;
                         System.out.println(i + ". " + spaceship.getName() + ", number of members " +
-                                (spaceship.getCrew().get(Role.MISSION_SPECIALIST)
-                                        + spaceship.getCrew().get(Role.FLIGHT_ENGINEER)
-                                        + spaceship.getCrew().get(Role.PILOT)
-                                        + spaceship.getCrew().get(Role.COMMANDER))
+                                        (spaceship.getCrew().get(Role.MISSION_SPECIALIST)
+                                                + spaceship.getCrew().get(Role.FLIGHT_ENGINEER)
+                                                + spaceship.getCrew().get(Role.PILOT)
+                                                + spaceship.getCrew().get(Role.COMMANDER))
                         );
                     }
-                    int choice2 = scanner.nextInt();
-                    System.out.println("Spaceship " + spaceshipCollection.get(choice2 - 1).getName() + " was assigned");
+                    int spaceshipIndex = scanner.nextInt() - 1;
+                    System.out.println("Spaceship " + spaceshipCollection.get(spaceshipIndex).getName() + " was assigned");
 
-                    SpaceshipServiceImpl.getInstance().assignSpaceshipOnMission(flightMission, spaceshipCollection.get(choice2 - 1));
+                    SpaceshipServiceImpl.getInstance().assignSpaceshipOnMission(flightMission, spaceshipCollection.get(spaceshipIndex));
 
                     CrewServiceImpl.getInstance().assignCrewMemberOnMission(flightMission);
 
                     break;
                 case 2:
-                    crewMembers.stream()
-                            .map(crewMember -> "{Name: " + crewMember.getName()
-                                    + ", role: " + crewMember.getRole()
-                                    + ", rank: " + crewMember.getRank() + "}")
-                            .forEach(System.out::println);
+
+                    System.out.println(printEntities());
+                    choice2 = scanner.nextInt();
+
+                    switch (choice2) {
+                        case 0:
+                            break;
+                        case 1:
+                            crewMembers.stream()
+                                    .map(crewMember -> "{Name: " + crewMember.getName()
+                                            + ", role: " + crewMember.getRole()
+                                            + ", rank: " + crewMember.getRank() + "}")
+                                    .forEachOrdered(System.out::println);
+                            break;
+                        case 2:
+                            spaceships.stream()
+                                    .map(spaceship -> "{Name: " + spaceship.getName()
+                                            + ", flight distance: " + spaceship.getFlightDistance() + "}")
+                                    .forEachOrdered(System.out::println);
+                            break;
+                        case 3:
+                            missions.stream()
+                                .map(mission -> "{" +
+                                        "Name: " + mission.getName()
+                                        + ", flight distance: " + mission.getDistance()
+                                        + ", start date: " + mission.getStartDate()
+                                        + ", end date: " + mission.getEndDate()
+                                        + "}")
+                                .forEachOrdered(System.out::println);
+                            break;
+                    }
                     break;
                 case 3:
-                    spaceships.stream()
-                            .map(spaceship -> "{Name: " + spaceship.getName()
-                                    + ", flight distance: " + spaceship.getFlightDistance() + "}")
-                            .forEachOrdered(System.out::println);
-                    break;
+
                 case 4:
-                    missions.stream()
-                            .map(mission -> "{" +
-                                    "Name: " + mission.getName()
-                                    + ", flight distance: " + mission.getDistance()
-                                    + ", start date: " + mission.getStartDate()
-                                    + ", end date: " + mission.getEndDate()
-                                    + "}")
-                            .forEachOrdered(System.out::println);
-                    break;
-                case 5:
-                    System.out.println("Writing to crewmember.json");
-                    try (FileOutputStream crewmemberFile = new FileOutputStream("src/main/resources/" + applicationProperties.getOutputRootDir() + "/crewmember.json")) {
-                        objectMapper.writeValue(crewmemberFile, crewMembers);
+
+                    System.out.println(printEntities());
+                    choice2 = scanner.nextInt();
+
+                    switch (choice2) {
+                        case 0:
+                            break;
+                        case 1:
+                            System.out.println("Writing to crewmember.json");
+                            try (FileOutputStream crewmemberFile = new FileOutputStream("src/main/resources/" + applicationProperties.getOutputRootDir() + "/crewmember.json")) {
+                                objectMapper.writeValue(crewmemberFile, crewMembers);
+                            }
+                            System.out.println("Finished");
+                            break;
+                        case 2:
+                            System.out.println("Writing to spaceship.json");
+                            try (FileOutputStream spaceshipFile = new FileOutputStream("src/main/resources/" + applicationProperties.getOutputRootDir() + "/spaceship.json")) {
+                                objectMapper.writeValue(spaceshipFile, spaceships);
+                            }
+                            System.out.println("Finished");
+                            break;
+                        case 3:
+                            System.out.println("Writing to missions.json");
+                            try (FileOutputStream missionFile = new FileOutputStream("src/main/resources/" + applicationProperties.getOutputRootDir() + "/mission.json")) {
+                                objectMapper.writeValue(missionFile, missions);
+                            }
+                            System.out.println("Finished");
+                            break;
                     }
-                    System.out.println("Finished");
-                    break;
-                case 6:
-                    System.out.println("Writing to spaceship.json");
-                    try (FileOutputStream spaceshipFile = new FileOutputStream("src/main/resources/" + applicationProperties.getOutputRootDir() + "/spaceship.json")) {
-                        objectMapper.writeValue(spaceshipFile, spaceships);
-                    }
-                    System.out.println("Finished");
-                    break;
-                case 7:
-                    System.out.println("Writing to missions.json");
-                    try (FileOutputStream missionFile = new FileOutputStream("src/main/resources/" + applicationProperties.getOutputRootDir() + "/mission.json")) {
-                        objectMapper.writeValue(missionFile, missions);
-                    }
-                    System.out.println("Finished");
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + choice);
