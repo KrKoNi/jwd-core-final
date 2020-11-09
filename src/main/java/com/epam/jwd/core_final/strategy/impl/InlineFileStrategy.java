@@ -5,8 +5,8 @@ import com.epam.jwd.core_final.domain.Role;
 import com.epam.jwd.core_final.exception.EntityDuplicateException;
 import com.epam.jwd.core_final.service.impl.CrewServiceImpl;
 import com.epam.jwd.core_final.strategy.FileStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
+
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -27,7 +27,7 @@ public class InlineFileStrategy implements FileStrategy {
         return INSTANCE;
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(InlineFileStrategy.class);
+    private static final Logger logger = Logger.getLogger(InlineFileStrategy.class.getName());
 
     @Override
     public void read(String path) throws IOException{

@@ -4,8 +4,8 @@ import com.epam.jwd.core_final.domain.Role;
 import com.epam.jwd.core_final.exception.EntityDuplicateException;
 import com.epam.jwd.core_final.service.impl.SpaceshipServiceImpl;
 import com.epam.jwd.core_final.strategy.FileStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
+
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,7 +26,7 @@ public class MultilineFileStrategy implements FileStrategy {
         return INSTANCE;
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(MultilineFileStrategy.class);
+    private static final Logger logger = Logger.getLogger(MultilineFileStrategy.class.getName());
 
     @Override
     public void read(String path) throws IOException {
