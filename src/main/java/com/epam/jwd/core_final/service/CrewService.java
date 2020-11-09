@@ -22,12 +22,11 @@ public interface CrewService {
 
     Optional<CrewMember> findCrewMemberByCriteria(Criteria<? extends CrewMember> criteria);
 
-    CrewMember updateCrewMemberDetails(CrewMember crewMember);
+    CrewMember updateCrewMemberDetails(CrewMember oldCrewMember, CrewMember updatedCrewMember);
 
     // todo create custom exception for case, when crewMember is not able to be assigned
-    void assignCrewMemberOnMission(FlightMission mission) throws RuntimeException;
+    void assignRandomCrewMembersOnMission(FlightMission mission) throws RuntimeException;
 
     // todo create custom exception for case, when crewMember is not able to be created (for example - duplicate.
-
     CrewMember createCrewMember(Role role, String name, Rank rank) throws RuntimeException, EntityDuplicateException;
 }

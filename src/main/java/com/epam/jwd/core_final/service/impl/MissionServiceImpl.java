@@ -2,9 +2,11 @@ package com.epam.jwd.core_final.service.impl;
 
 import com.epam.jwd.core_final.context.impl.NassaContext;
 import com.epam.jwd.core_final.criteria.Criteria;
+import com.epam.jwd.core_final.criteria.FlightMissionCriteria;
 import com.epam.jwd.core_final.domain.CrewMember;
 import com.epam.jwd.core_final.domain.FlightMission;
 import com.epam.jwd.core_final.domain.MissionResult;
+import com.epam.jwd.core_final.domain.Spaceship;
 import com.epam.jwd.core_final.factory.impl.FlightMissionFactory;
 import com.epam.jwd.core_final.service.MissionService;
 
@@ -14,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MissionServiceImpl implements MissionService {
 
@@ -43,8 +46,17 @@ public class MissionServiceImpl implements MissionService {
         return Optional.empty();
     }
 
+    public void printAllMissions() {
+        List<FlightMission> flightMissions = findAllMissions();
+        AtomicInteger i = new AtomicInteger();
+        flightMissions.stream().map(flightMission -> (i.incrementAndGet()) + ". " + flightMission.toString()).forEachOrdered(System.out::println);
+    }
+
     @Override
-    public FlightMission updateSpaceshipDetails(FlightMission flightMission) {
+    public FlightMission updateMissionDetails(FlightMission flightMission, FlightMission updatedFlightMission) {
+
+
+
         return null;
     }
 
@@ -77,9 +89,9 @@ public class MissionServiceImpl implements MissionService {
         MissionResult missionResult = rand.nextBoolean() ? MissionResult.COMPLETED : MissionResult.FAILED;
         mission.setMissionResult( missionResult );
         for (CrewMember crewMember : mission.getAssignedCrew()) {
-            crewMember.setReadyForNextMissions(missionResult == MissionResult.COMPLETED);
+            crewMember.setReadyForNextMissions(missionResult == MissionResult.COMPLETED); // TODO: 11/9/20 change state using update method
         }
-        mission.getAssignedSpaceship().setReadyForNextMissions(missionResult == MissionResult.COMPLETED);
+        mission.getAssignedSpaceship().setReadyForNextMissions(missionResult == MissionResult.COMPLETED); // TODO: 11/9/20 change state using update method
     }
 
 }

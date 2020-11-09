@@ -17,6 +17,7 @@ public abstract class AbstractBaseEntity implements BaseEntity {
     }
 
 
+
     @Override
     public Long getId() {
         return id;

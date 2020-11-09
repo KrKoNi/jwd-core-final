@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class SpaceshipServiceImpl implements SpaceshipService {
@@ -41,21 +42,21 @@ public class SpaceshipServiceImpl implements SpaceshipService {
         SpaceshipCriteria criteria1 = (SpaceshipCriteria) criteria;
 
         return spaceships.stream().filter(spaceship -> (
-                (spaceship.getName().equals( criteria1.getName()) || criteria1.getName() == null)
-                        && (spaceship.getFlightDistance() >= criteria1.getFlightDistance() || criteria1.getFlightDistance() == null)
-                        && (spaceship.getReadyForNextMissions() == criteria1.getReadyForNextMissions() || criteria1.getReadyForNextMissions() == null)
+                (criteria1.getName() == null || spaceship.getName().equals( criteria1.getName()))
+                        && (criteria1.getFlightDistance() == null || spaceship.getFlightDistance() >= criteria1.getFlightDistance())
+                        && ( criteria1.getReadyForNextMissions() == null || spaceship.getReadyForNextMissions() == criteria1.getReadyForNextMissions())
         )).collect(Collectors.toList());
     }
 
     @Override
     public Optional<Spaceship> findSpaceshipByCriteria(Criteria<? extends Spaceship> criteria) {
         List<Spaceship> spaceships = findAllSpaceships();
-        SpaceshipCriteria criteria1 = (SpaceshipCriteria) criteria;
+        SpaceshipCriteria spaceshipCriteria = (SpaceshipCriteria) criteria;
 
         return spaceships.stream().filter(spaceship -> (
-                (spaceship.getName().equals( criteria1.getName()) || criteria1.getName() == null)
-                        && (criteria1.getFlightDistance() == null || spaceship.getFlightDistance() >= criteria1.getFlightDistance())
-                        && ( criteria1.getReadyForNextMissions() == null || spaceship.getReadyForNextMissions() == criteria1.getReadyForNextMissions())
+                ( spaceshipCriteria.getName() == null || spaceship.getName().equals( spaceshipCriteria.getName()))
+                        && (spaceshipCriteria.getFlightDistance() == null || spaceship.getFlightDistance() >= spaceshipCriteria.getFlightDistance())
+                        && ( spaceshipCriteria.getReadyForNextMissions() == null || spaceship.getReadyForNextMissions() == spaceshipCriteria.getReadyForNextMissions())
         )).findFirst();
     }
 
@@ -72,6 +73,22 @@ public class SpaceshipServiceImpl implements SpaceshipService {
     public void assignSpaceshipOnMission(FlightMission mission, Spaceship spaceship) {
         spaceship.setReadyForNextMissions(false);
         mission.setAssignedSpaceship(spaceship);
+    }
+
+    public void printAllSpaceships() {
+        List<Spaceship> spaceships = findAllSpaceships();
+        AtomicInteger i = new AtomicInteger();
+        spaceships.stream().map(spaceship -> (i.incrementAndGet()) + ". " + spaceship.toString()).forEachOrdered(System.out::println);
+    }
+
+    public void printAllAvailableSpaceships() {
+        List<Spaceship> availableSpaceships = findAllSpaceshipsByCriteria(
+                new SpaceshipCriteria.Builder() {{
+                    isReadyForNextMissions(true);
+                }}.build()
+        );
+        AtomicInteger i = new AtomicInteger();
+        availableSpaceships.stream().map(spaceship -> (i.incrementAndGet()) + ". " + spaceship.toString()).forEachOrdered(System.out::println);
     }
 
 
@@ -102,5 +119,8 @@ public class SpaceshipServiceImpl implements SpaceshipService {
         Collection<Spaceship> spaceships = findAllSpaceships();
         spaceships.add(spaceship);
         return spaceship;
+    }
+    public Spaceship createTemporarySpaceship(String name, Long distance, Map<Role, Short> crew) throws RuntimeException {
+        return SpaceshipFactory.getInstance().create(name, distance, crew);
     }
 }

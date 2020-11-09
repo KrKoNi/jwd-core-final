@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class CrewServiceImpl implements CrewService {
@@ -61,12 +62,23 @@ public class CrewServiceImpl implements CrewService {
     }
 
     @Override
-    public CrewMember updateCrewMemberDetails(CrewMember crewMember) {
-        return null;
+    public CrewMember updateCrewMemberDetails(CrewMember oldCrewMember, CrewMember updatedCrewMember) {
+
+      //  oldCrewMember.setReadyForNextMissions(updatedCrewMember.getReadyForNextMissions());
+        oldCrewMember.setRank(updatedCrewMember.getRank());
+        oldCrewMember.setRole(updatedCrewMember.getRole());
+
+        return oldCrewMember;
+    }
+
+    public void printAllCrewMembers() {
+        List<CrewMember> crewMembers = findAllCrewMembers();
+        AtomicInteger i = new AtomicInteger();
+        crewMembers.stream().map(crewMember -> (i.incrementAndGet()) + ". " + crewMember.toString()).forEachOrdered(System.out::println);
     }
 
     @Override
-    public void assignCrewMemberOnMission(FlightMission mission) throws RuntimeException {
+    public void assignRandomCrewMembersOnMission(FlightMission mission) throws RuntimeException {
         Spaceship spaceship = mission.getAssignedSpaceship();
 
         Map<Role, Short> crew = spaceship.getCrew();
@@ -133,4 +145,9 @@ public class CrewServiceImpl implements CrewService {
         crewMembers.add(crewMember);
         return crewMember;
     }
+
+    public CrewMember createTemporaryCrewMember(Role role, String name, Rank rank) throws RuntimeException {
+        return CrewMemberFactory.getInstance().create(role, name, rank);
+    }
+
 }
