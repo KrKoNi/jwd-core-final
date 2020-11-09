@@ -8,12 +8,11 @@ import com.epam.jwd.core_final.domain.FlightMission;
 import com.epam.jwd.core_final.domain.Spaceship;
 import com.epam.jwd.core_final.exception.InvalidStateException;
 import com.epam.jwd.core_final.strategy.impl.CrewFile;
-import com.epam.jwd.core_final.strategy.impl.InlineFileStrategy;
-import com.epam.jwd.core_final.strategy.impl.MultilineFileStrategy;
 import com.epam.jwd.core_final.strategy.impl.SpaceshipFile;
 import com.epam.jwd.core_final.util.PropertyReaderUtil;
 
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -24,7 +23,6 @@ public class NassaContext implements ApplicationContext {
         return INSTANCE;
     }
 
-    // no getters/setters for them
     private final Collection<CrewMember> crewMembers = new ArrayList<>();
     private final Collection<Spaceship> spaceships = new ArrayList<>();
     private final Collection<Spaceship> missions = new ArrayList<>();
@@ -57,23 +55,21 @@ public class NassaContext implements ApplicationContext {
     @Override
     public void init() throws InvalidStateException {
         applicationProperties = PropertyReaderUtil.loadProperties();
-
-        String crewPath = "src/main/resources/"
+        String separator = FileSystems.getDefault().getSeparator();
+        String crewPath = "src" + separator + "main" + separator + "resources" + separator
                 + NassaContext.getInstance().getApplicationProperties().getInputRootDir()
-                + "/"
+                + separator
                 + NassaContext.getInstance().getApplicationProperties().getCrewFileName();
-        String spaceshipPath = "src/main/resources/"
+        String spaceshipPath = "src" + separator + "main" + separator + "resources" + separator
                 + NassaContext.getInstance().getApplicationProperties().getInputRootDir()
-                + "/"
+                + separator
                 + NassaContext.getInstance().getApplicationProperties().getSpaceshipsFileName();
         try {
             new CrewFile(crewPath).read();
             new SpaceshipFile(spaceshipPath).read();
         } catch (IOException e) {
             System.out.println("File not found");
-            System.out.println(e);
+            throw new InvalidStateException();
         }
-
-        //throw new InvalidStateException();
     }
 }

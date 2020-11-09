@@ -12,7 +12,7 @@ public class Main {
         ApplicationMenu applicationMenu;
         try {
             applicationMenu = Application.start();
-            applicationMenu.handleUserInput(applicationMenu.printAvailableOptions());
+            applicationMenu.handleUserInput();
         } catch (IOException | InvalidStateException e) {
             System.out.println(e);
         }
