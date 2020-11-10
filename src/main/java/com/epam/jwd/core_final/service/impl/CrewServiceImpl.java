@@ -12,6 +12,7 @@ import com.epam.jwd.core_final.exception.EntityDuplicateException;
 import com.epam.jwd.core_final.factory.impl.CrewMemberFactory;
 import com.epam.jwd.core_final.service.CrewService;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -142,6 +143,11 @@ public class CrewServiceImpl implements CrewService {
         Collection<CrewMember> crewMembers = NassaContext.getInstance().retrieveBaseEntityList(CrewMember.class);
         crewMembers.add(crewMember);
         return crewMember;
+    }
+
+    @Override
+    public Boolean isAvailable(LocalDateTime startDate, LocalDateTime endDate) {
+        return null;
     }
 
     @Override

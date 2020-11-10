@@ -7,6 +7,7 @@ import com.epam.jwd.core_final.domain.CrewMember;
 import com.epam.jwd.core_final.domain.FlightMission;
 import com.epam.jwd.core_final.domain.Spaceship;
 import com.epam.jwd.core_final.exception.InvalidStateException;
+import com.epam.jwd.core_final.exception.UnknownEntityException;
 import com.epam.jwd.core_final.strategy.impl.CrewFile;
 import com.epam.jwd.core_final.strategy.impl.SpaceshipFile;
 import com.epam.jwd.core_final.util.PropertyReaderUtil;
@@ -38,7 +39,7 @@ public class NassaContext implements ApplicationContext {
         if(tClass.toString().equals(FlightMission.class.toString())) {
             return (Collection<T>) missions;
         }
-        return null;
+        throw new UnknownEntityException("Unknown Base Entity. You can retrieve only CrewMember, FlightMission, or Spaceship collections.");
     }
 
     /**

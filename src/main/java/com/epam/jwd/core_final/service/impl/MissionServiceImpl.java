@@ -3,21 +3,21 @@ package com.epam.jwd.core_final.service.impl;
 import com.epam.jwd.core_final.context.impl.NassaContext;
 import com.epam.jwd.core_final.criteria.Criteria;
 import com.epam.jwd.core_final.criteria.FlightMissionCriteria;
-import com.epam.jwd.core_final.criteria.SpaceshipCriteria;
 import com.epam.jwd.core_final.domain.CrewMember;
 import com.epam.jwd.core_final.domain.FlightMission;
 import com.epam.jwd.core_final.domain.MissionResult;
-import com.epam.jwd.core_final.domain.Spaceship;
 import com.epam.jwd.core_final.factory.impl.FlightMissionFactory;
 import com.epam.jwd.core_final.service.MissionService;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class MissionServiceImpl implements MissionService {
 
@@ -48,9 +48,9 @@ public class MissionServiceImpl implements MissionService {
         FlightMissionCriteria flightMissionCriteria = (FlightMissionCriteria) criteria;
 
         return missions.stream().filter(mission -> (
-                ( flightMissionCriteria.getName() == null || mission.getName().equals(flightMissionCriteria.getName()) )
-                && (flightMissionCriteria.getDistance() == null || flightMissionCriteria.getDistance().equals(mission.getDistance()))
-                && (flightMissionCriteria.getStartDate() == null || flightMissionCriteria.getStartDate().equals(mission.getStartDate()))
+                        (flightMissionCriteria.getName() == null || mission.getName().equals(flightMissionCriteria.getName()))
+                                && (flightMissionCriteria.getDistance() == null || flightMissionCriteria.getDistance().equals(mission.getDistance()))
+                                && (flightMissionCriteria.getStartDate() == null || flightMissionCriteria.getStartDate().equals(mission.getStartDate()))
                 )
         ).findFirst();
     }
@@ -85,12 +85,12 @@ public class MissionServiceImpl implements MissionService {
         double progress = (double) Duration.between(LocalDateTime.now(), flightMission.getStartDate()).toMillis()
                 / (double) Duration.between(flightMission.getEndDate(), flightMission.getStartDate()).toMillis();
 
-        return progress*100 > 100 ? 100 : progress < 0 ? 0 : progress*100;
+        return progress * 100 > 100 ? 100 : progress < 0 ? 0 : progress * 100;
     }
 
     @Override
-    public void missionStatusUpdate (FlightMission mission) {
-        if(mission.getStartDate().isBefore(LocalDateTime.now()) && mission.getMissionResult() == MissionResult.PLANNED) {
+    public void missionStatusUpdate(FlightMission mission) {
+        if (mission.getStartDate().isBefore(LocalDateTime.now()) && mission.getMissionResult() == MissionResult.PLANNED) {
             mission.setMissionResult(MissionResult.IN_PROGRESS);
         }
         if (mission.getEndDate().isBefore(LocalDateTime.now()) && mission.getMissionResult() == MissionResult.IN_PROGRESS) {
@@ -102,7 +102,7 @@ public class MissionServiceImpl implements MissionService {
     public void finishMission(FlightMission mission) {
         Random rand = new Random();
         MissionResult missionResult = rand.nextBoolean() ? MissionResult.COMPLETED : MissionResult.FAILED;
-        mission.setMissionResult( missionResult );
+        mission.setMissionResult(missionResult);
         mission.getAssignedCrew()
                 .forEach(crewMember -> crewMember.setReadyForNextMissions(missionResult == MissionResult.COMPLETED));
         mission.getAssignedSpaceship().setReadyForNextMissions(missionResult == MissionResult.COMPLETED);
@@ -113,4 +113,17 @@ public class MissionServiceImpl implements MissionService {
         return new FlightMission("", startDate, endDate, distance);
     }
 
+    @Override
+    public List<FlightMission> getMissionsWithCrewMember(CrewMember crewMember) {
+        List<FlightMission> flightMissionsWithCrewMember;
+        List<FlightMission> flightMissions = findAllMissions();
+
+        flightMissionsWithCrewMember = flightMissions.stream()
+                .filter(flightMission -> flightMission.getAssignedCrew().stream()
+                                .anyMatch(crewMember::equals))
+                .collect(Collectors.toList());
+
+
+        return flightMissionsWithCrewMember;
+    }
 }

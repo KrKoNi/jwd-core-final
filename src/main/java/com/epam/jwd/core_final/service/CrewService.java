@@ -7,6 +7,7 @@ import com.epam.jwd.core_final.domain.Rank;
 import com.epam.jwd.core_final.domain.Role;
 import com.epam.jwd.core_final.exception.EntityDuplicateException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,4 +32,6 @@ public interface CrewService {
     CrewMember createTemporaryCrewMember(Role role, Rank rank) throws RuntimeException;
 
     CrewMember createCrewMember(Role role, String name, Rank rank) throws RuntimeException, EntityDuplicateException;
+
+    Boolean isAvailable(LocalDateTime startDate, LocalDateTime endDate);
 }

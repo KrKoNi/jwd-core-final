@@ -1,6 +1,7 @@
 package com.epam.jwd.core_final.service;
 
 import com.epam.jwd.core_final.criteria.Criteria;
+import com.epam.jwd.core_final.domain.CrewMember;
 import com.epam.jwd.core_final.domain.FlightMission;
 
 import java.time.LocalDateTime;
@@ -28,4 +29,6 @@ public interface MissionService {
     void printAllMissions();
 
     FlightMission createTemporaryMission(LocalDateTime startDate, LocalDateTime endDate, Long distance);
+
+    List<FlightMission> getMissionsWithCrewMember(CrewMember crewMember);
 }

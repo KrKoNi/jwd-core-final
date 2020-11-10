@@ -16,8 +16,6 @@ public abstract class AbstractBaseEntity implements BaseEntity {
         this.id = ++idCounter;
     }
 
-
-
     @Override
     public Long getId() {
         return id;
