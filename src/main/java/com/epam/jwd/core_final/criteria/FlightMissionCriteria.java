@@ -99,22 +99,4 @@ public class FlightMissionCriteria extends Criteria<FlightMission> {
         missionResult = builder.missionResult;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        FlightMissionCriteria that = (FlightMissionCriteria) o;
-        return Objects.equals(startDate, that.startDate) &&
-                Objects.equals(endDate, that.endDate) &&
-                Objects.equals(distance, that.distance) &&
-                Objects.equals(assignedSpaceship, that.assignedSpaceship) &&
-                Objects.equals(assignedCrew, that.assignedCrew) &&
-                missionResult == that.missionResult;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), startDate, endDate, distance, assignedSpaceship, assignedCrew, missionResult);
-    }
 }

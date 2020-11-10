@@ -45,19 +45,5 @@ public class SpaceshipCriteria extends Criteria<Spaceship> {
         flightDistance = builder.flightDistance;
         isReadyForNextMissions = builder.isReadyForNextMissions;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        SpaceshipCriteria that = (SpaceshipCriteria) o;
-        return Objects.equals(flightDistance, that.flightDistance) &&
-                Objects.equals(isReadyForNextMissions, that.isReadyForNextMissions);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), flightDistance, isReadyForNextMissions);
-    }
+    
 }
