@@ -75,12 +75,16 @@ public class SpaceshipServiceImpl implements SpaceshipService {
         mission.setAssignedSpaceship(spaceship);
     }
 
+    @Override
     public void printAllSpaceships() {
         List<Spaceship> spaceships = findAllSpaceships();
         AtomicInteger i = new AtomicInteger();
-        spaceships.stream().map(spaceship -> (i.incrementAndGet()) + ". " + spaceship.toString()).forEachOrdered(System.out::println);
+        spaceships.stream()
+                .map(spaceship -> (i.incrementAndGet()) + ". " + spaceship.toString())
+                .forEachOrdered(System.out::println);
     }
 
+    @Override
     public void printAllAvailableSpaceships() {
         List<Spaceship> availableSpaceships = findAllSpaceshipsByCriteria(
                 new SpaceshipCriteria.Builder() {{
@@ -88,10 +92,12 @@ public class SpaceshipServiceImpl implements SpaceshipService {
                 }}.build()
         );
         AtomicInteger i = new AtomicInteger();
-        availableSpaceships.stream().map(spaceship -> (i.incrementAndGet()) + ". " + spaceship.toString()).forEachOrdered(System.out::println);
+        availableSpaceships.stream()
+                .map(spaceship -> (i.incrementAndGet()) + ". " + spaceship.toString())
+                .forEachOrdered(System.out::println);
     }
 
-
+    @Override
     public void assignRandomSpaceshipOnMission(FlightMission mission) throws RuntimeException, FreeSpaceshipAbsentException {
         Optional<Spaceship> spaceship = findSpaceshipByCriteria(new SpaceshipCriteria.Builder() {{
             flightDistance(mission.getDistance());
@@ -120,7 +126,9 @@ public class SpaceshipServiceImpl implements SpaceshipService {
         spaceships.add(spaceship);
         return spaceship;
     }
-    public Spaceship createTemporarySpaceship(String name, Long distance, Map<Role, Short> crew) throws RuntimeException {
-        return SpaceshipFactory.getInstance().create(name, distance, crew);
+
+    @Override
+    public Spaceship createTemporarySpaceship(Long distance) throws RuntimeException {
+        return SpaceshipFactory.getInstance().create("", distance, null);
     }
 }

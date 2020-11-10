@@ -29,5 +29,11 @@ public interface SpaceshipService {
 
     void printAllSpaceships();
 
+    void printAllAvailableSpaceships();
+
+    void assignRandomSpaceshipOnMission(FlightMission mission) throws RuntimeException, FreeSpaceshipAbsentException;
+
     Spaceship createSpaceship(String name, Long distance, Map<Role, Short> crew) throws RuntimeException, EntityDuplicateException;
+
+    Spaceship createTemporarySpaceship(Long distance) throws RuntimeException;
 }

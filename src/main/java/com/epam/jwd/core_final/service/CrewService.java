@@ -24,9 +24,11 @@ public interface CrewService {
 
     CrewMember updateCrewMemberDetails(CrewMember oldCrewMember, CrewMember updatedCrewMember);
 
-    // todo create custom exception for case, when crewMember is not able to be assigned
+    void printAllCrewMembers();
+
     void assignRandomCrewMembersOnMission(FlightMission mission) throws RuntimeException;
 
-    // todo create custom exception for case, when crewMember is not able to be created (for example - duplicate.
+    CrewMember createTemporaryCrewMember(Role role, Rank rank) throws RuntimeException;
+
     CrewMember createCrewMember(Role role, String name, Rank rank) throws RuntimeException, EntityDuplicateException;
 }

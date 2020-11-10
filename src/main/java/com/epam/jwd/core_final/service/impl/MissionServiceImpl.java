@@ -3,6 +3,7 @@ package com.epam.jwd.core_final.service.impl;
 import com.epam.jwd.core_final.context.impl.NassaContext;
 import com.epam.jwd.core_final.criteria.Criteria;
 import com.epam.jwd.core_final.criteria.FlightMissionCriteria;
+import com.epam.jwd.core_final.criteria.SpaceshipCriteria;
 import com.epam.jwd.core_final.domain.CrewMember;
 import com.epam.jwd.core_final.domain.FlightMission;
 import com.epam.jwd.core_final.domain.MissionResult;
@@ -43,21 +44,32 @@ public class MissionServiceImpl implements MissionService {
 
     @Override
     public Optional<FlightMission> findMissionByCriteria(Criteria<? extends FlightMission> criteria) {
-        return Optional.empty();
-    }
+        List<FlightMission> missions = findAllMissions();
+        FlightMissionCriteria flightMissionCriteria = (FlightMissionCriteria) criteria;
 
-    public void printAllMissions() {
-        List<FlightMission> flightMissions = findAllMissions();
-        AtomicInteger i = new AtomicInteger();
-        flightMissions.stream().map(flightMission -> (i.incrementAndGet()) + ". " + flightMission.toString()).forEachOrdered(System.out::println);
+        return missions.stream().filter(mission -> (
+                ( flightMissionCriteria.getName() == null || mission.getName().equals(flightMissionCriteria.getName()) )
+                && (flightMissionCriteria.getDistance() == null || flightMissionCriteria.getDistance().equals(mission.getDistance()))
+                && (flightMissionCriteria.getStartDate() == null || flightMissionCriteria.getStartDate().equals(mission.getStartDate()))
+                )
+        ).findFirst();
     }
 
     @Override
-    public FlightMission updateMissionDetails(FlightMission flightMission, FlightMission updatedFlightMission) {
+    public void printAllMissions() {
+        List<FlightMission> flightMissions = findAllMissions();
+        AtomicInteger i = new AtomicInteger();
+        flightMissions.stream()
+                .map(flightMission -> (i.incrementAndGet()) + ". " + flightMission.toString())
+                .forEachOrdered(System.out::println);
+    }
 
-
-
-        return null;
+    @Override
+    public FlightMission updateMissionDetails(FlightMission oldFlightMission, FlightMission updatedFlightMission) {
+        oldFlightMission.setDistance(updatedFlightMission.getDistance());
+        oldFlightMission.setStartDate(updatedFlightMission.getStartDate());
+        oldFlightMission.setEndDate(updatedFlightMission.getEndDate());
+        return oldFlightMission;
     }
 
     @Override
@@ -68,6 +80,7 @@ public class MissionServiceImpl implements MissionService {
         return flightMission;
     }
 
+    @Override
     public Double calculateMissionProgress(FlightMission flightMission) {
         double progress = (double) Duration.between(LocalDateTime.now(), flightMission.getStartDate()).toMillis()
                 / (double) Duration.between(flightMission.getEndDate(), flightMission.getStartDate()).toMillis();
@@ -75,6 +88,7 @@ public class MissionServiceImpl implements MissionService {
         return progress*100 > 100 ? 100 : progress < 0 ? 0 : progress*100;
     }
 
+    @Override
     public void missionStatusUpdate (FlightMission mission) {
         if(mission.getStartDate().isBefore(LocalDateTime.now()) && mission.getMissionResult() == MissionResult.PLANNED) {
             mission.setMissionResult(MissionResult.IN_PROGRESS);
@@ -84,14 +98,19 @@ public class MissionServiceImpl implements MissionService {
         }
     }
 
+    @Override
     public void finishMission(FlightMission mission) {
         Random rand = new Random();
         MissionResult missionResult = rand.nextBoolean() ? MissionResult.COMPLETED : MissionResult.FAILED;
         mission.setMissionResult( missionResult );
-        for (CrewMember crewMember : mission.getAssignedCrew()) {
-            crewMember.setReadyForNextMissions(missionResult == MissionResult.COMPLETED); // TODO: 11/9/20 change state using update method
-        }
-        mission.getAssignedSpaceship().setReadyForNextMissions(missionResult == MissionResult.COMPLETED); // TODO: 11/9/20 change state using update method
+        mission.getAssignedCrew()
+                .forEach(crewMember -> crewMember.setReadyForNextMissions(missionResult == MissionResult.COMPLETED));
+        mission.getAssignedSpaceship().setReadyForNextMissions(missionResult == MissionResult.COMPLETED);
+    }
+
+    @Override
+    public FlightMission createTemporaryMission(LocalDateTime startDate, LocalDateTime endDate, Long distance) {
+        return new FlightMission("", startDate, endDate, distance);
     }
 
 }

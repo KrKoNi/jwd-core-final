@@ -18,4 +18,14 @@ public interface MissionService {
     FlightMission updateMissionDetails(FlightMission oldFlightMission, FlightMission updatedFlightMission);
 
     FlightMission createMission(String name, LocalDateTime startDate, LocalDateTime endDate, Long distance);
+
+    Double calculateMissionProgress(FlightMission flightMission);
+
+    void missionStatusUpdate (FlightMission mission);
+
+    void finishMission(FlightMission mission);
+
+    void printAllMissions();
+
+    FlightMission createTemporaryMission(LocalDateTime startDate, LocalDateTime endDate, Long distance);
 }

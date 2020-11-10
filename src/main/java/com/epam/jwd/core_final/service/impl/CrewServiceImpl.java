@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class CrewServiceImpl implements CrewService {
 
@@ -64,17 +65,20 @@ public class CrewServiceImpl implements CrewService {
     @Override
     public CrewMember updateCrewMemberDetails(CrewMember oldCrewMember, CrewMember updatedCrewMember) {
 
-      //  oldCrewMember.setReadyForNextMissions(updatedCrewMember.getReadyForNextMissions());
+        //  oldCrewMember.setReadyForNextMissions(updatedCrewMember.getReadyForNextMissions());
         oldCrewMember.setRank(updatedCrewMember.getRank());
         oldCrewMember.setRole(updatedCrewMember.getRole());
 
         return oldCrewMember;
     }
 
+    @Override
     public void printAllCrewMembers() {
         List<CrewMember> crewMembers = findAllCrewMembers();
         AtomicInteger i = new AtomicInteger();
-        crewMembers.stream().map(crewMember -> (i.incrementAndGet()) + ". " + crewMember.toString()).forEachOrdered(System.out::println);
+        crewMembers.stream()
+                .map(crewMember -> (i.incrementAndGet()) + ". " + crewMember.toString())
+                .forEachOrdered(System.out::println);
     }
 
     @Override
@@ -83,52 +87,46 @@ public class CrewServiceImpl implements CrewService {
 
         Map<Role, Short> crew = spaceship.getCrew();
 
-        for (int i = 0; i < crew.get(Role.MISSION_SPECIALIST); i++) {
-            Optional<CrewMember> crewMember = findCrewMemberByCriteria(new CrewMemberCriteria.Builder() {{
-                role(Role.MISSION_SPECIALIST);
-                isReadyForNextMissions(true);
-            }}.build());
-
-            if (crewMember.isPresent()) {
-                CrewMember crewMember1 = crewMember.get();
-                crewMember1.setReadyForNextMissions(false);
-                mission.addCrew(crewMember1);
-            }
-
-        }
-        for (int i = 0; i < crew.get(Role.FLIGHT_ENGINEER); i++) {
-            Optional<CrewMember> crewMember = findCrewMemberByCriteria(new CrewMemberCriteria.Builder() {{
-                role(Role.FLIGHT_ENGINEER);
-                isReadyForNextMissions(true);
-            }}.build());
-
-            crewMember.ifPresent(member -> {
-                member.setReadyForNextMissions(false);
-                mission.addCrew(member);
-            });
-        }
-        for (int i = 0; i < crew.get(Role.PILOT); i++) {
-            Optional<CrewMember> crewMember = findCrewMemberByCriteria(new CrewMemberCriteria.Builder() {{
-                role(Role.PILOT);
-                isReadyForNextMissions(true);
-            }}.build());
-
-            crewMember.ifPresent(member -> {
-                member.setReadyForNextMissions(false);
-                mission.addCrew(member);
-            });
-        }
-        for (int i = 0; i < crew.get(Role.COMMANDER); i++) {
-            Optional<CrewMember> crewMember = findCrewMemberByCriteria(new CrewMemberCriteria.Builder() {{
-                role(Role.COMMANDER);
-                isReadyForNextMissions(true);
-            }}.build());
-
-            crewMember.ifPresent(member -> {
-                member.setReadyForNextMissions(false);
-                mission.addCrew(member);
-            });
-        }
+        IntStream.range(0, crew.get(Role.MISSION_SPECIALIST))
+                .mapToObj(i -> findCrewMemberByCriteria(
+                        new CrewMemberCriteria.Builder() {{
+                            role(Role.MISSION_SPECIALIST);
+                            isReadyForNextMissions(true);
+                        }}.build()))
+                .forEachOrdered(crewMember -> crewMember.ifPresent(member -> {
+                    member.setReadyForNextMissions(false);
+                    mission.addCrew(member);
+                }));
+        IntStream.range(0, crew.get(Role.FLIGHT_ENGINEER))
+                .mapToObj(i -> findCrewMemberByCriteria(
+                        new CrewMemberCriteria.Builder() {{
+                            role(Role.FLIGHT_ENGINEER);
+                            isReadyForNextMissions(true);
+                        }}.build()))
+                .forEachOrdered(crewMember -> crewMember.ifPresent(member -> {
+                    member.setReadyForNextMissions(false);
+                    mission.addCrew(member);
+                }));
+        IntStream.range(0, crew.get(Role.PILOT))
+                .mapToObj(i -> findCrewMemberByCriteria(
+                        new CrewMemberCriteria.Builder() {{
+                            role(Role.PILOT);
+                            isReadyForNextMissions(true);
+                        }}.build()))
+                .forEachOrdered(crewMember -> crewMember.ifPresent(member -> {
+                    member.setReadyForNextMissions(false);
+                    mission.addCrew(member);
+                }));
+        IntStream.range(0, crew.get(Role.COMMANDER))
+                .mapToObj(i -> findCrewMemberByCriteria(
+                        new CrewMemberCriteria.Builder() {{
+                            role(Role.COMMANDER);
+                            isReadyForNextMissions(true);
+                        }}.build()))
+                .forEachOrdered(crewMember -> crewMember.ifPresent(member -> {
+                    member.setReadyForNextMissions(false);
+                    mission.addCrew(member);
+                }));
 
     }
 
@@ -146,8 +144,9 @@ public class CrewServiceImpl implements CrewService {
         return crewMember;
     }
 
-    public CrewMember createTemporaryCrewMember(Role role, String name, Rank rank) throws RuntimeException {
-        return CrewMemberFactory.getInstance().create(role, name, rank);
+    @Override
+    public CrewMember createTemporaryCrewMember(Role role, Rank rank) throws RuntimeException {
+        return CrewMemberFactory.getInstance().create(role, "", rank);
     }
 
 }
