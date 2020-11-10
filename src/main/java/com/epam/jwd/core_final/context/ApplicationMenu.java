@@ -11,7 +11,6 @@ import com.epam.jwd.core_final.domain.Role;
 import com.epam.jwd.core_final.domain.Spaceship;
 import com.epam.jwd.core_final.exception.EndDateIsBeforeStartDateException;
 import com.epam.jwd.core_final.exception.UnknownEntityException;
-import com.epam.jwd.core_final.service.MissionService;
 import com.epam.jwd.core_final.service.impl.CrewServiceImpl;
 import com.epam.jwd.core_final.service.impl.MissionServiceImpl;
 import com.epam.jwd.core_final.service.impl.SpaceshipServiceImpl;
@@ -97,7 +96,7 @@ public interface ApplicationMenu {
                             Optional<FlightMission> optionalFlightMission = MissionServiceImpl.getInstance().findMissionByCriteria(
                                     new FlightMissionCriteria.Builder() {{
                                         name(finalName);
-                            }}.build());
+                                    }}.build());
                             if (optionalFlightMission.isPresent()) {
                                 name = null;
                                 System.out.println("Mission with this name already exists");
@@ -135,7 +134,7 @@ public interface ApplicationMenu {
                     while (endDate == null) {
                         try {
                             endDate = LocalDateTime.parse(scanner.nextLine(), dateTimeFormatter);
-                            if(!startDate.isBefore(endDate)) {
+                            if (!startDate.isBefore(endDate)) {
                                 endDate = null;
                                 throw new EndDateIsBeforeStartDateException("Finish time has to be after beginning.");
                             }
@@ -330,7 +329,7 @@ public interface ApplicationMenu {
                 while (updatedEndDate == null) {
                     try {
                         updatedEndDate = LocalDateTime.parse(scanner.nextLine(), dateTimeFormatter);
-                        if(!updatedStartDate.isBefore(updatedEndDate)) {
+                        if (!updatedStartDate.isBefore(updatedEndDate)) {
                             updatedEndDate = null;
                             throw new EndDateIsBeforeStartDateException("Finish time has to be after beginning.");
                         }

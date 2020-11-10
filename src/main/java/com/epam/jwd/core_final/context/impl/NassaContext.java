@@ -18,8 +18,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class NassaContext implements ApplicationContext {
-    private NassaContext() {}
+    private NassaContext() {
+    }
+
     private final static NassaContext INSTANCE = new NassaContext();
+
     public static NassaContext getInstance() {
         return INSTANCE;
     }
@@ -30,13 +33,13 @@ public class NassaContext implements ApplicationContext {
 
     @Override
     public <T extends BaseEntity> Collection<T> retrieveBaseEntityList(Class<T> tClass) {
-        if(tClass.toString().equals(CrewMember.class.toString())) {
+        if (tClass.toString().equals(CrewMember.class.toString())) {
             return (Collection<T>) crewMembers;
         }
-        if(tClass.toString().equals(Spaceship.class.toString())) {
+        if (tClass.toString().equals(Spaceship.class.toString())) {
             return (Collection<T>) spaceships;
         }
-        if(tClass.toString().equals(FlightMission.class.toString())) {
+        if (tClass.toString().equals(FlightMission.class.toString())) {
             return (Collection<T>) missions;
         }
         throw new UnknownEntityException("Unknown Base Entity. You can retrieve only CrewMember, FlightMission, or Spaceship collections.");
@@ -44,6 +47,7 @@ public class NassaContext implements ApplicationContext {
 
     /**
      * You have to read input files, populate collections
+     *
      * @throws InvalidStateException
      */
 

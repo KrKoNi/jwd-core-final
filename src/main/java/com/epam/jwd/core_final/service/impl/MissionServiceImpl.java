@@ -11,7 +11,6 @@ import com.epam.jwd.core_final.service.MissionService;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -120,7 +119,7 @@ public class MissionServiceImpl implements MissionService {
 
         flightMissionsWithCrewMember = flightMissions.stream()
                 .filter(flightMission -> flightMission.getAssignedCrew().stream()
-                                .anyMatch(crewMember::equals))
+                        .anyMatch(crewMember::equals))
                 .collect(Collectors.toList());
 
 
