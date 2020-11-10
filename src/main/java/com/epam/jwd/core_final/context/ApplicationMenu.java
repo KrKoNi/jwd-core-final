@@ -69,12 +69,19 @@ public interface ApplicationMenu {
         ApplicationProperties applicationProperties = NassaContext.getInstance().getApplicationProperties();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(applicationProperties.getDateTimeFormat());
         LocalDateTime lastCheckTime = LocalDateTime.now();
+        Long previousCrewFileSize = Files.size(Path.of(NassaContext.getInstance().getCrewPath()));
+        Long previousSpaceshipFileSize = Files.size(Path.of(NassaContext.getInstance().getSpaceshipPath()));
         while (true) {
             if (Duration.between(lastCheckTime, LocalDateTime.now()).toMinutes() > applicationProperties.getFileRefreshRate()) {
-                crewMembers.clear();
-                spaceships.clear();
-                NassaContext.getInstance().init();
                 lastCheckTime = LocalDateTime.now();
+                if(Files.size(Path.of(NassaContext.getInstance().getCrewPath())) != previousCrewFileSize
+                        || Files.size(Path.of(NassaContext.getInstance().getSpaceshipPath())) != previousSpaceshipFileSize) {
+                    previousCrewFileSize = Files.size(Path.of(NassaContext.getInstance().getCrewPath());
+                    previousSpaceshipFileSize = Files.size(Path.of(NassaContext.getInstance().getSpaceshipPath());
+                    crewMembers.clear();
+                    spaceships.clear();
+                    NassaContext.getInstance().init();
+                }
             }
 
             missions.forEach(mission -> MissionServiceImpl.getInstance().missionStatusUpdate(mission));

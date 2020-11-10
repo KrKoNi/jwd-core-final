@@ -57,18 +57,30 @@ public class NassaContext implements ApplicationContext {
         return applicationProperties;
     }
 
+    private final String separator = FileSystems.getDefault().getSeparator();
+
+    private final String crewPath = "src" + separator + "main" + separator + "resources" + separator
+            + NassaContext.getInstance().getApplicationProperties().getInputRootDir()
+            + separator
+            + NassaContext.getInstance().getApplicationProperties().getCrewFileName();
+    private final String spaceshipPath = "src" + separator + "main" + separator + "resources" + separator
+            + NassaContext.getInstance().getApplicationProperties().getInputRootDir()
+            + separator
+            + NassaContext.getInstance().getApplicationProperties().getSpaceshipsFileName();
+
+    public String getCrewPath() {
+        return crewPath;
+    }
+
+    public String getSpaceshipPath() {
+        return spaceshipPath;
+    }
+
     @Override
     public void init() throws InvalidStateException {
         applicationProperties = PropertyReaderUtil.loadProperties();
-        String separator = FileSystems.getDefault().getSeparator();
-        String crewPath = "src" + separator + "main" + separator + "resources" + separator
-                + NassaContext.getInstance().getApplicationProperties().getInputRootDir()
-                + separator
-                + NassaContext.getInstance().getApplicationProperties().getCrewFileName();
-        String spaceshipPath = "src" + separator + "main" + separator + "resources" + separator
-                + NassaContext.getInstance().getApplicationProperties().getInputRootDir()
-                + separator
-                + NassaContext.getInstance().getApplicationProperties().getSpaceshipsFileName();
+
+
         try {
             new CrewFile(crewPath).read();
             new SpaceshipFile(spaceshipPath).read();
