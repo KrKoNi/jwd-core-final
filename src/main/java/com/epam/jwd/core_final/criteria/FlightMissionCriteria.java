@@ -6,6 +6,7 @@ import com.epam.jwd.core_final.domain.MissionResult;
 import com.epam.jwd.core_final.domain.Spaceship;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,8 +14,8 @@ import java.util.Objects;
  * Should be a builder for {@link com.epam.jwd.core_final.domain.FlightMission} fields
  */
 public class FlightMissionCriteria extends Criteria<FlightMission> {
-    private final LocalDate startDate;
-    private final LocalDate endDate;
+    private final LocalDateTime startDate;
+    private final LocalDateTime endDate;
     private final Long distance;
     private final Spaceship assignedSpaceship;
     private final List<CrewMember> assignedCrew;
@@ -24,11 +25,11 @@ public class FlightMissionCriteria extends Criteria<FlightMission> {
         return assignedCrew;
     }
 
-    public LocalDate getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public LocalDate getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
@@ -45,8 +46,8 @@ public class FlightMissionCriteria extends Criteria<FlightMission> {
     }
 
     public static class Builder extends Criteria.Builder {
-        private LocalDate startDate = null;
-        private LocalDate endDate = null;
+        private LocalDateTime startDate = null;
+        private LocalDateTime endDate = null;
         private Long distance = null;
         private Spaceship assignedSpaceship = null;
         private List<CrewMember> assignedCrew = null;
@@ -63,12 +64,12 @@ public class FlightMissionCriteria extends Criteria<FlightMission> {
             return this;
         }
 
-        public Builder startDate(LocalDate startDate) {
+        public Builder startDate(LocalDateTime startDate) {
             this.startDate = startDate;
             return this;
         }
 
-        public Builder endDate(LocalDate endDate) {
+        public Builder endDate(LocalDateTime endDate) {
             this.endDate = endDate;
             return this;
         }
