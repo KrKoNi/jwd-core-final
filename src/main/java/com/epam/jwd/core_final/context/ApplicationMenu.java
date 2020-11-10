@@ -74,6 +74,7 @@ public interface ApplicationMenu {
                 crewMembers.clear();
                 spaceships.clear();
                 NassaContext.getInstance().init();
+                lastCheckTime = LocalDateTime.now();
             }
 
             missions.forEach(mission -> MissionServiceImpl.getInstance().missionStatusUpdate(mission));
