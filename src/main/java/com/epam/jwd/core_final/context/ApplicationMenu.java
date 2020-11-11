@@ -78,8 +78,8 @@ public interface ApplicationMenu {
                         || Files.size(Path.of(NassaContext.getInstance().getSpaceshipPath())) != previousSpaceshipFileSize) {
                     previousCrewFileSize = Files.size(Path.of(NassaContext.getInstance().getCrewPath()));
                     previousSpaceshipFileSize = Files.size(Path.of(NassaContext.getInstance().getSpaceshipPath()));
-                    crewMembers.clear();
-                    spaceships.clear();
+                    crewMembers.removeIf(CrewMember::getReadyForNextMissions);
+                    spaceships.removeIf(Spaceship::getReadyForNextMissions);
                     NassaContext.getInstance().init();
                 }
             }
