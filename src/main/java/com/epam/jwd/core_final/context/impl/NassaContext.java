@@ -59,18 +59,13 @@ public class NassaContext implements ApplicationContext {
 
     private final String separator = FileSystems.getDefault().getSeparator();
 
-    private final String crewPath = "src" + separator + "main" + separator + "resources" + separator
-            + NassaContext.getInstance().getApplicationProperties().getInputRootDir()
-            + separator
-            + NassaContext.getInstance().getApplicationProperties().getCrewFileName();
-    private final String spaceshipPath = "src" + separator + "main" + separator + "resources" + separator
-            + NassaContext.getInstance().getApplicationProperties().getInputRootDir()
-            + separator
-            + NassaContext.getInstance().getApplicationProperties().getSpaceshipsFileName();
+    private String crewPath;
 
     public String getCrewPath() {
         return crewPath;
     }
+
+    private String spaceshipPath;
 
     public String getSpaceshipPath() {
         return spaceshipPath;
@@ -79,8 +74,14 @@ public class NassaContext implements ApplicationContext {
     @Override
     public void init() throws InvalidStateException {
         applicationProperties = PropertyReaderUtil.loadProperties();
-
-
+        crewPath = "src" + separator + "main" + separator + "resources" + separator
+                + applicationProperties.getInputRootDir()
+                + separator
+                + applicationProperties.getCrewFileName();
+        spaceshipPath = "src" + separator + "main" + separator + "resources" + separator
+                + applicationProperties.getInputRootDir()
+                + separator
+                + applicationProperties.getSpaceshipsFileName();
         try {
             new CrewFile(crewPath).read();
             new SpaceshipFile(spaceshipPath).read();
