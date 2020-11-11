@@ -13,6 +13,7 @@ import com.epam.jwd.core_final.factory.impl.CrewMemberFactory;
 import com.epam.jwd.core_final.service.CrewService;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -87,47 +88,19 @@ public class CrewServiceImpl implements CrewService {
         Spaceship spaceship = mission.getAssignedSpaceship();
 
         Map<Role, Short> crew = spaceship.getCrew();
-
-        IntStream.range(0, crew.get(Role.MISSION_SPECIALIST))
-                .mapToObj(i -> findCrewMemberByCriteria(
-                        new CrewMemberCriteria.Builder() {{
-                            role(Role.MISSION_SPECIALIST);
-                            isReadyForNextMissions(true);
-                        }}.build()))
-                .forEachOrdered(crewMember -> crewMember.ifPresent(member -> {
-                    member.setReadyForNextMissions(false);
-                    mission.addCrew(member);
-                }));
-        IntStream.range(0, crew.get(Role.FLIGHT_ENGINEER))
-                .mapToObj(i -> findCrewMemberByCriteria(
-                        new CrewMemberCriteria.Builder() {{
-                            role(Role.FLIGHT_ENGINEER);
-                            isReadyForNextMissions(true);
-                        }}.build()))
-                .forEachOrdered(crewMember -> crewMember.ifPresent(member -> {
-                    member.setReadyForNextMissions(false);
-                    mission.addCrew(member);
-                }));
-        IntStream.range(0, crew.get(Role.PILOT))
-                .mapToObj(i -> findCrewMemberByCriteria(
-                        new CrewMemberCriteria.Builder() {{
-                            role(Role.PILOT);
-                            isReadyForNextMissions(true);
-                        }}.build()))
-                .forEachOrdered(crewMember -> crewMember.ifPresent(member -> {
-                    member.setReadyForNextMissions(false);
-                    mission.addCrew(member);
-                }));
-        IntStream.range(0, crew.get(Role.COMMANDER))
-                .mapToObj(i -> findCrewMemberByCriteria(
-                        new CrewMemberCriteria.Builder() {{
-                            role(Role.COMMANDER);
-                            isReadyForNextMissions(true);
-                        }}.build()))
-                .forEachOrdered(crewMember -> crewMember.ifPresent(member -> {
-                    member.setReadyForNextMissions(false);
-                    mission.addCrew(member);
-                }));
+        Arrays.stream(Role.values())
+                .forEachOrdered(value ->
+                        IntStream.range(0, crew.get(value))
+                                .mapToObj(i1 -> findCrewMemberByCriteria(
+                                        new CrewMemberCriteria.Builder() {{
+                                            role(value);
+                                            isReadyForNextMissions(true);
+                                        }}.build()))
+                                .forEachOrdered(crewMemberByCriteria -> crewMemberByCriteria.ifPresent(member -> {
+                                    member.setReadyForNextMissions(false);
+                                    mission.addCrew(member);
+                                }))
+                );
 
     }
 
