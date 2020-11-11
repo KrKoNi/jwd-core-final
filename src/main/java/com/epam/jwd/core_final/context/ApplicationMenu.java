@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 // todo replace Object with your own types
 @FunctionalInterface
@@ -355,18 +356,22 @@ public interface ApplicationMenu {
                 missionToUpdate.getAssignedSpaceship().setReadyForNextMissions(true);
 
                 Long finalDistance = updatedDistance;
-                List<Spaceship> spaceshipCollection = SpaceshipServiceImpl.getInstance()
+                List<Spaceship> availableSpaceships = SpaceshipServiceImpl.getInstance()
                         .findAllSpaceshipsByCriteria(new SpaceshipCriteria.Builder() {{
                             flightDistance(finalDistance);
                             isReadyForNextMissions(true);
                         }}.build());
 
                 System.out.println("Choose spaceship for mission");
-                SpaceshipServiceImpl.getInstance().printAllAvailableSpaceships();
+                AtomicInteger index = new AtomicInteger();
+                availableSpaceships.stream().map(spaceship -> (index.incrementAndGet()) +". " + spaceship.toString()).forEach(System.out::println);
                 int spaceshipToAssignIndex = scanner.nextInt() - 1;
 
-                SpaceshipServiceImpl.getInstance().assignSpaceshipOnMission(missionToUpdate, spaceshipCollection.get(spaceshipToAssignIndex));
-                System.out.println("Spaceship " + spaceshipCollection.get(spaceshipToAssignIndex).getName() + " was assigned");
+                SpaceshipServiceImpl.getInstance().assignSpaceshipOnMission(missionToUpdate, availableSpaceships.get(spaceshipToAssignIndex));
+                missionToUpdate.getAssignedCrew().forEach(crewMember -> crewMember.setReadyForNextMissions(true));
+                CrewServiceImpl.getInstance().assignRandomCrewMembersOnMission(missionToUpdate);
+
+                System.out.println("Spaceship " + availableSpaceships.get(spaceshipToAssignIndex).getName() + " was assigned");
                 logger.info("Mission " + missionToUpdate.getName() + " was updated");
                 break;
             default:

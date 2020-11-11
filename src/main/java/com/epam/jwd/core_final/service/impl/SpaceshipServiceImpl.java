@@ -85,7 +85,7 @@ public class SpaceshipServiceImpl implements SpaceshipService {
     }
 
     @Override
-    public void printAllAvailableSpaceships() {
+    public List<Spaceship> printAllAvailableSpaceships() {
         List<Spaceship> availableSpaceships = findAllSpaceshipsByCriteria(
                 new SpaceshipCriteria.Builder() {{
                     isReadyForNextMissions(true);
@@ -95,6 +95,7 @@ public class SpaceshipServiceImpl implements SpaceshipService {
         availableSpaceships.stream()
                 .map(spaceship -> (i.incrementAndGet()) + ". " + spaceship.toString())
                 .forEachOrdered(System.out::println);
+        return availableSpaceships;
     }
 
     @Override

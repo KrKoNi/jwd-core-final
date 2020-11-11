@@ -29,7 +29,7 @@ public interface SpaceshipService {
 
     void printAllSpaceships();
 
-    void printAllAvailableSpaceships();
+    List<Spaceship> printAllAvailableSpaceships();
 
     void assignRandomSpaceshipOnMission(FlightMission mission) throws RuntimeException, FreeSpaceshipAbsentException;
 
