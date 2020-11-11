@@ -74,10 +74,10 @@ public interface ApplicationMenu {
         while (true) {
             if (Duration.between(lastCheckTime, LocalDateTime.now()).toMinutes() > applicationProperties.getFileRefreshRate()) {
                 lastCheckTime = LocalDateTime.now();
-                if(Files.size(Path.of(NassaContext.getInstance().getCrewPath())) != previousCrewFileSize
+                if (Files.size(Path.of(NassaContext.getInstance().getCrewPath())) != previousCrewFileSize
                         || Files.size(Path.of(NassaContext.getInstance().getSpaceshipPath())) != previousSpaceshipFileSize) {
-                    previousCrewFileSize = Files.size(Path.of(NassaContext.getInstance().getCrewPath());
-                    previousSpaceshipFileSize = Files.size(Path.of(NassaContext.getInstance().getSpaceshipPath());
+                    previousCrewFileSize = Files.size(Path.of(NassaContext.getInstance().getCrewPath()));
+                    previousSpaceshipFileSize = Files.size(Path.of(NassaContext.getInstance().getSpaceshipPath()));
                     crewMembers.clear();
                     spaceships.clear();
                     NassaContext.getInstance().init();
