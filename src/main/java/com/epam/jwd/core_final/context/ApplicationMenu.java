@@ -233,38 +233,40 @@ public interface ApplicationMenu {
                 int crewMemberIndex = scanner.nextInt() - 1;
 
                 CrewMember crewMemberToChange = null;
-
-                try {
-                    crewMemberToChange = crewMembers.get(crewMemberIndex);
-                } catch (IndexOutOfBoundsException e) {
-                    logger.error("Index out of bound");
-                    System.out.println("Index out of bound");
-                    break;
+                while (crewMemberToChange == null) {
+                    try {
+                        crewMemberToChange = crewMembers.get(crewMemberIndex);
+                    } catch (IndexOutOfBoundsException e) {
+                        logger.error("Index out of bound");
+                        System.out.println("Index out of bound");
+                    }
                 }
-
                 System.out.println("Choose new role (enter 0 to leave previous role): ");
                 System.out.println(Arrays.toString(Role.values()));
                 Long crewMemberNewRoleId = scanner.nextLong();
                 crewMemberNewRoleId = crewMemberNewRoleId == 0L ? crewMemberToChange.getRole().getId() : crewMemberNewRoleId;
                 Role crewMemberNewRole = null;
-                try {
-                    crewMemberNewRole = Role.resolveRoleById(crewMemberNewRoleId);
-                } catch (UnknownEntityException e) {
-                    logger.error("There is no role with entered id");
+                while (crewMemberNewRole == null) {
+                    try {
+                        crewMemberNewRole = Role.resolveRoleById(crewMemberNewRoleId);
+                    } catch (UnknownEntityException e) {
+                        logger.error("There is no role with entered id");
+                        System.out.println("There is no role with entered id");
+                    }
                 }
-
                 System.out.println("Choose new rank (enter 0 to leave previous rank): ");
                 System.out.println(Arrays.toString(Rank.values()));
                 Long crewMemberNewRankId = scanner.nextLong();
                 crewMemberNewRankId = crewMemberNewRankId == 0L ? crewMemberToChange.getRank().getId() : crewMemberNewRankId;
                 Rank crewMemberNewRank = null;
-                try {
-                    crewMemberNewRank = Rank.resolveRankById(crewMemberNewRankId);
-                } catch (UnknownEntityException e) {
-                    logger.error("There is no rank with entered id");
-                    System.out.println("There is no rank with entered id");
+                while (crewMemberNewRank == null) {
+                    try {
+                        crewMemberNewRank = Rank.resolveRankById(crewMemberNewRankId);
+                    } catch (UnknownEntityException e) {
+                        logger.error("There is no rank with entered id");
+                        System.out.println("There is no rank with entered id");
+                    }
                 }
-
                 CrewMember updatedCrewMember = CrewServiceImpl.getInstance().createTemporaryCrewMember(crewMemberNewRole, crewMemberNewRank);
                 CrewServiceImpl.getInstance().updateCrewMemberDetails(crewMemberToChange, updatedCrewMember);
                 logger.info("CrewMember " + crewMemberToChange.getName() + " was updated");
@@ -275,14 +277,14 @@ public interface ApplicationMenu {
                 int spaceshipToUpdateIndex = scanner.nextInt() - 1;
 
                 Spaceship spaceshipToUpdate = null;
-                try {
-                    spaceshipToUpdate = spaceships.get(spaceshipToUpdateIndex);
-                } catch (IndexOutOfBoundsException e) {
-                    logger.error("Index out of bound");
-                    System.out.println("Index out of bound");
-                    break;
+                while (spaceshipToUpdate == null) {
+                    try {
+                        spaceshipToUpdate = spaceships.get(spaceshipToUpdateIndex);
+                    } catch (IndexOutOfBoundsException e) {
+                        logger.error("Index out of bound");
+                        System.out.println("Index out of bound");
+                    }
                 }
-
 
                 System.out.println("Enter new spaceship flight distance: ");
                 Long spaceshipFlightDistance = null;
@@ -304,13 +306,13 @@ public interface ApplicationMenu {
                 int missionToUpdateIndex = scanner.nextInt() - 1;
 
                 FlightMission missionToUpdate = null;
-                try {
-                    missionToUpdate = missions.get(missionToUpdateIndex);
-                } catch (IndexOutOfBoundsException e) {
-                    System.out.println("Index out of bound");
-                    break;
+                while (missionToUpdate == null) {
+                    try {
+                        missionToUpdate = missions.get(missionToUpdateIndex);
+                    } catch (IndexOutOfBoundsException e) {
+                        System.out.println("Index out of bound");
+                    }
                 }
-
                 System.out.println("Enter updated flight distance:");
                 Long updatedDistance = null;
                 while (updatedDistance == null) {
