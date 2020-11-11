@@ -10,6 +10,7 @@ import com.epam.jwd.core_final.domain.Rank;
 import com.epam.jwd.core_final.domain.Role;
 import com.epam.jwd.core_final.domain.Spaceship;
 import com.epam.jwd.core_final.exception.EndDateIsBeforeStartDateException;
+import com.epam.jwd.core_final.exception.FreeCrewMemberAbsentException;
 import com.epam.jwd.core_final.exception.UnknownEntityException;
 import com.epam.jwd.core_final.service.impl.CrewServiceImpl;
 import com.epam.jwd.core_final.service.impl.MissionServiceImpl;
@@ -168,10 +169,16 @@ public interface ApplicationMenu {
                     int spaceshipToAssignIndex = scanner.nextInt() - 1;
 
                     SpaceshipServiceImpl.getInstance().assignSpaceshipOnMission(flightMission, spaceshipCollection.get(spaceshipToAssignIndex));
-                    System.out.println("Spaceship " + spaceshipCollection.get(spaceshipToAssignIndex).getName() + " was assigned");
-                    logger.info("Spaceship " + spaceshipCollection.get(spaceshipToAssignIndex).getName() + " was assigned");
 
-                    CrewServiceImpl.getInstance().assignRandomCrewMembersOnMission(flightMission);
+                    try {
+                        CrewServiceImpl.getInstance().assignRandomCrewMembersOnMission(flightMission);
+                        System.out.println("Spaceship " + spaceshipCollection.get(spaceshipToAssignIndex).getName() + " was assigned");
+                        logger.info("Spaceship " + spaceshipCollection.get(spaceshipToAssignIndex).getName() + " was assigned");
+                    } catch (FreeCrewMemberAbsentException e) {
+                        System.out.println(e.getMessage());
+                        logger.error(e.getMessage());
+                        break;
+                    }
 
                     break;
                 case 2:
@@ -369,10 +376,16 @@ public interface ApplicationMenu {
 
                 SpaceshipServiceImpl.getInstance().assignSpaceshipOnMission(missionToUpdate, availableSpaceships.get(spaceshipToAssignIndex));
                 missionToUpdate.getAssignedCrew().forEach(crewMember -> crewMember.setReadyForNextMissions(true));
-                CrewServiceImpl.getInstance().assignRandomCrewMembersOnMission(missionToUpdate);
+                try {
+                    CrewServiceImpl.getInstance().assignRandomCrewMembersOnMission(missionToUpdate);
+                    System.out.println("Spaceship " + availableSpaceships.get(spaceshipToAssignIndex).getName() + " was assigned");
+                    logger.info("Mission " + missionToUpdate.getName() + " was updated");
+                } catch (FreeCrewMemberAbsentException e) {
+                    System.out.println(e.getMessage());
+                    logger.error(e.getMessage());
+                }
 
-                System.out.println("Spaceship " + availableSpaceships.get(spaceshipToAssignIndex).getName() + " was assigned");
-                logger.info("Mission " + missionToUpdate.getName() + " was updated");
+
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + choice);

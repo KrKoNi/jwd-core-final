@@ -9,6 +9,7 @@ import com.epam.jwd.core_final.domain.Rank;
 import com.epam.jwd.core_final.domain.Role;
 import com.epam.jwd.core_final.domain.Spaceship;
 import com.epam.jwd.core_final.exception.EntityDuplicateException;
+import com.epam.jwd.core_final.exception.FreeCrewMemberAbsentException;
 import com.epam.jwd.core_final.factory.impl.CrewMemberFactory;
 import com.epam.jwd.core_final.service.CrewService;
 
@@ -88,19 +89,23 @@ public class CrewServiceImpl implements CrewService {
         Spaceship spaceship = mission.getAssignedSpaceship();
 
         Map<Role, Short> crew = spaceship.getCrew();
-        Arrays.stream(Role.values())
-                .forEachOrdered(value ->
-                        IntStream.range(0, crew.get(value))
-                                .mapToObj(i1 -> findCrewMemberByCriteria(
-                                        new CrewMemberCriteria.Builder() {{
-                                            role(value);
-                                            isReadyForNextMissions(true);
-                                        }}.build()))
-                                .forEachOrdered(crewMemberByCriteria -> crewMemberByCriteria.ifPresent(member -> {
-                                    member.setReadyForNextMissions(false);
-                                    mission.addCrew(member);
-                                }))
-                );
+        for (Role value : Role.values()) {
+            int bound = crew.get(value);
+            for (int i1 = 0; i1 < bound; i1++) {
+                Optional<CrewMember> crewMemberByCriteria = findCrewMemberByCriteria(
+                        new CrewMemberCriteria.Builder() {{
+                            role(value);
+                            isReadyForNextMissions(true);
+                        }}.build());
+                if(crewMemberByCriteria.isEmpty()) {
+                    throw new FreeCrewMemberAbsentException("There is no available crewmember for mission");
+                }
+                crewMemberByCriteria.ifPresent(member -> {
+                    member.setReadyForNextMissions(false);
+                    mission.addCrew(member);
+                });
+            }
+        }
 
     }
 
